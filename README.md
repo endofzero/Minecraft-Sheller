@@ -1,13 +1,13 @@
 Installation :
 ==============
 - copy the script into your minecraft server folder.
-- allow the script to be executed ( chmod +x minecraft.sh )
+- allow the script to be executed 
+     chmod +x minecraft.sh
 - check the rights of the script user. Every folder specified in the 
 configuration phase has to be available to him.
 - edit the script to configure it (see the configuration section)
 
-(optional)
----------
+#### (optional)
 - I strongly recommend using crontab to automate some of the process. I 
 prefer to perform logs + cartography + server restart at 4AM 
 every day. 
@@ -21,9 +21,8 @@ our world.
 - I made an alias to be able to use 'minecraft command' instead of 
 './minecraft.sh command'. It also enables the automatic completion, if 
 you type 'mine' then press tab. Much quicker =) You can do this by 
-editing /home/USER/.bashrc, and adding the line --> alias 
-  
-    minecraft="/home/minecraft/minecraft.sh" 
+editing /home/USER/.bashrc, and adding the line:
+     alias minecraft="/home/minecraft/minecraft.sh" 
 **(of course, change the path if needed)**
 
 Considerations:
@@ -32,7 +31,7 @@ Considerations:
 If using [Brownan's Overviewer](http://github.com/brownan/Minecraft-Overviewer) to create Google-like maps of your worlds, 
 be sure you are using the --cachedir=/path/to/dir to change the location 
 of the png files as you will start to take up considerable space since it
-defaults to save the files inside of the world folder. This can make backups
+defaults to save the files inside of the world folder. This can grow backups
 that are only 3mb to 99mb files. If you are not cleaning the logs, this will
 start to consume a considerable amount of hard drive space.
 
@@ -46,7 +45,7 @@ Open minecraft.sh with a text editor, and edit the following lines, at the begin
 This is the path to your minecraft folder
 
     SERVERMOD=0
-If you are running hey0's servermod, this needs to be set to 1 (better logging and automatic updating of the mod)
+If you are running hey0's servermod, this needs to be set to 1 _(better logging and automatic updating of the mod)_
 
     RUNECRAFT=0
 If you want your script to update runecraft automatically too, set this to 1
@@ -67,7 +66,7 @@ Do you want the screen to be displayed each time the server starts? 1 if yes, 0 
 This is the path to the backup folder. Map backups and old log entries will go there.
 
     BKUP_DAYS=3
-How long will the map backups be kept? **(Only used with the './minecraft.sh backup clean' command)**
+How long will the map backups be kept? _(Only used with the './minecraft.sh backup clean' command)_
 
     CARTO_PATH=$MC_PATH/carto
 This is the path to c10t's cartography script
@@ -79,7 +78,7 @@ This is the path to the world maps folder
 This is the path to the logs folder
 
     LOGS_DAYS=7
-How long will the logs be kept? **(Only used with the './minecraft.sh logs clean' command)**
+How long will the logs be kept? _(Only used with the './minecraft.sh logs clean' command)_
 
 ### Detailed Command Usage
 
