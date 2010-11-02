@@ -23,12 +23,21 @@ our world.
 you type 'mine' then press tab. Much quicker =) You can do this by 
 editing /home/USER/.bashrc, and adding the line --> alias 
   
-  minecraft="/home/minecraft/minecraft.sh" 
-of course, change the path if needed
+    minecraft="/home/minecraft/minecraft.sh" 
+**(of course, change the path if needed)**
 
+Considerations:
+--------------
+
+If using [Brownan's Overviewer](http://github.com/brownan/Minecraft-Overviewer) to create Google-like maps of your worlds, 
+be sure you are using the --cachedir=/path/to/dir to change the location 
+of the png files as you will start to take up considerable space since it
+defaults to save the files inside of the world folder. This can make backups
+that are only 3mb to 99mb files. If you are not cleaning the logs, this will
+start to consume a considerable amount of hard drive space.
 
 Configuration :
----------------
+===============
 
 There are several variables to set before you can run the script for the first time.
 Open minecraft.sh with a text editor, and edit the following lines, at the beginning of the file :
@@ -52,13 +61,13 @@ This is the name of the screen the server will be run on
 This is the size of RAM you want to allocate to the server
 
     DISPLAY_ON_LAUNCH=1
-Do you want the screen to be displayed each time the server starts ? 1 if yes, 0 if no.
+Do you want the screen to be displayed each time the server starts? 1 if yes, 0 if no.
 
     BKUP_PATH=$MC_PATH/backup
 This is the path to the backup folder. Map backups and old log entries will go there.
 
     BKUP_DAYS=3
-How long will the map backups be kept ? (Only used with the './minecraft.sh backup clean' command)
+How long will the map backups be kept? **(Only used with the './minecraft.sh backup clean' command)**
 
     CARTO_PATH=$MC_PATH/carto
 This is the path to c10t's cartography script
@@ -70,7 +79,7 @@ This is the path to the world maps folder
 This is the path to the logs folder
 
     LOGS_DAYS=7
-How long will the logs be kept? **strong**(Only used with the './minecraft.sh logs clean' command)**strong**
+How long will the logs be kept? **(Only used with the './minecraft.sh logs clean' command)**
 
 ### Detailed Command Usage
 
