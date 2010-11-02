@@ -1,44 +1,49 @@
 Installation :
---------------
+==============
 - copy the script into your minecraft server folder.
 - allow the script to be executed ( chmod +x minecraft.sh )
-- check the rights of the script user. Every folder specified in the configuration phase has to be available to him.
+- check the rights of the script user. Every folder specified in the 
+configuration phase has to be available to him.
 - edit the script to configure it (see the configuration section)
 
 (optional)
-- I strongly recommend using crontab to automate some of the process. I prefer to perform logs + cartography + server restart at 4AM 
-every day. The 'logs' command should always be used BEFORE a restart, as the restart wipes the previous logs. I'm running hey0's servermod, which 
+---------
+- I strongly recommend using crontab to automate some of the process. I 
+prefer to perform logs + cartography + server restart at 4AM 
+every day. 
+- The 'logs' command should always be used BEFORE a restart, as 
+the restart wipes the previous logs. I'm running hey0's servermod, which 
 allows to have a log history, but thats not the case for everyone.
-- I also recommend setting an Internet public folder, for the maps images to be displayed. People on my server love this feature, as they 
-know a new map is generated every day, and they can see the evolution of our world.
-- I made an alias to be able to use 'minecraft command' instead of './mincraft.sh command'. It also enables the automatic completion, if you type 'mine' then press tab. Much quicker =) You can do this by 
+- I also recommend setting an Internet public folder, for the maps 
+images to be displayed. People on my server love this feature, as they 
+know a new map is generated every day, and they can see the evolution of 
+our world.
+- I made an alias to be able to use 'minecraft command' instead of './mincraft.sh command'. It also enables the automatic completion, if 
+you type 'mine' then press tab. Much quicker =) You can do this by 
 editing /home/USER/.bashrc, and adding the line --> alias 
-minecraft="/home/minecraft/minecraft.sh" <-- (of course, change the path if needed)
+minecraft="/home/minecraft/minecraft.sh" <-- (of course, change the path 
+if needed)
 
 
 Configuration :
 ---------------
 
-      There are several variables to set before you can run the script 
-for the first time.
-      Open minecraft.sh with a text editor, and edit the following 
-lines, at the beginning of the file :
+There are several variables to set before you can run the script for the first time.
+Open minecraft.sh with a text editor, and edit the following lines, at the beginning of the file :
 
-          o MC_PATH=/home/minecraft
-            This is the path to your minecraft folder
-          o SERVERMOD=0
-            If you are running hey0's servermod, this needs to be set to 
-1 (better logging and automatic updating of the mod)
-          o RUNECRAFT=0
-            If you want your script to update runecraft automatically 
-too, set this to 1
-          o WORLD_NAME="world"
-            This is the path to the world folder
-          o SCREEN_NAME="minecraft"
-            This is the name of the screen the server will be run
-          o MEMALOC=1024
-            This is the size of RAM you want to allocate to the server
-          o DISPLAY_ON_LAUNCH=1
+* MC_PATH=/home/minecraft
+	This is the path to your minecraft folder
+* SERVERMOD=0
+	If you are running hey0's servermod, this needs to be set to 1 (better logging and automatic updating of the mod)
+* RUNECRAFT=0
+	If you want your script to update runecraft automatically too, set this to 1
+* WORLD_NAME="world"
+	This is the path to the world folder
+* SCREEN_NAME="minecraft"
+        This is the name of the screen the server will be run on
+* MEMALOC=1024
+        This is the size of RAM you want to allocate to the server
+* DISPLAY_ON_LAUNCH=1
             Do you want the screen to be displayed each time the server 
 starts ? 1 if yes, 0 if no.
           o BKUP_PATH=$MC_PATH/backup
@@ -58,7 +63,7 @@ log entries will go there.
 './minecraft.sh logs clean' command)
 
 
-    * Detailed Usage :
+### Detailed Command Usage
 
 o ./minecraft.sh
             Without arguments, the script will resume the server screen. 
@@ -105,3 +110,4 @@ the server.
 
 
 Any advice on how to upgrade this script is very welcome.
+
