@@ -1,15 +1,17 @@
 #!/bin/bash
 # original author : Relliktsohg
 # Huge thanks to Maine for his incremental backup
+# THanks to endofzero for his improved update routine
 
 #	Configuration
+
 MC_PATH=/home/minecraft
-SERVERMOD=1
-SCREEN_NAME="minecraft"
-MEMMAX=1536
-MEMALOC=1014
-DISPLAY_ON_LAUNCH=0
+SERVERMOD=0
 RUNECRAFT=0
+SCREEN_NAME="minecraft"
+MEMALOC=512
+DISPLAY_ON_LAUNCH=1
+
 WORLD_NAME="world"
 
 BKUP_PATH=$MC_PATH/backup
@@ -19,18 +21,28 @@ BACKUP_FULL_LINK=${BKUP_PATH}/${WORLD_NAME}_full.tgz
 BACKUP_INCR_LINK=${BKUP_PATH}/${WORLD_NAME}_incr.tgz
 
 CARTO_PATH=$MC_PATH/carto
-MAPS_PATH=/var/www/minecraft/maps
-LOG_TDIR=/var/www/minecraft/logs
+MAPS_PATH=/var/www/minecraftMaps
+LOG_TDIR=/var/www/minecraftLogs
 LOGS_DAYS=7
 
 # 	End of configuration
 
-if [ -e $MC_PATH/server.log.lck ]
+if [ $SERVERMOD -eq 1 ]
 then
-	#	ps -e | grep java | wc -l
-	ONLINE=1
-else 
-	ONLINE=0
+        if [ -e $MC_PATH/logs/*.log.lck ]
+        then
+                ONLINE=1
+        else
+                ONLINE=0
+        fi
+else
+        if [ -e $MC_PATH/server.log.lck ]
+        then
+                #       ps -e | grep java | wc -l
+                ONLINE=1
+        else
+                ONLINE=0
+        fi
 fi
 
 display() {
@@ -41,17 +53,14 @@ server_launch() {
 	echo "Launching minecraft server..."
 	if [ $SERVERMOD -eq 1 ]
 	then
-		echo "Minecraft_Mod.jar"
-		cd $MC_PATH; screen -m -d -S $SCREEN_NAME java -Xmx${MEMMAX}M -Xms${MEMALOC}M -jar Minecraft_Mod.jar nogui; sleep 1
+		cd $MC_PATH; screen -m -d -S $SCREEN_NAME java -Xmx${MEMALOC}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar Minecraft_Mod.jar nogui; sleep 1
 	else
-		echo "minecraft_server.jar"
-		cd $MC_PATH; screen -m -d -S $SCREEN_NAME java -Xmx${MEMMAX}M -Xms${MEMALOC}M -jar minecraft_server.jar nogui; sleep 1
+		cd $MC_PATH; screen -m -d -S $SCREEN_NAME java -Xmx${MEMALOC}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar minecraft_server.jar nogui; sleep 1
 	fi		
 }
 	
 server_stop() {
-	echo "Saving and Stopping minecraft server..."
-	screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all.\r"`"; sleep 2
+	echo "Stopping minecraft server..."
 	screen -S $SCREEN_NAME -p 0 -X stuff "`printf "stop.\r"`"; sleep 5
 }
 
@@ -145,8 +154,6 @@ then
 			
 		DATE=$(date +%d-%m-%Hh%M)
 		LOG_TFILE=logs-$DATE.log
-
-		LOG_MASTERFILE=master-log.log
 		
 		if [ $SERVERMOD -eq 1 ]
 		then
@@ -164,7 +171,6 @@ then
 				if [ $i != $LOG_LCK.log.lck ] # skip du fichier lck
 				then
 					cat $i >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
-					cat $i >> $LOG_TDIR/$LOG_MASTERFILE
 					if [ $i != $LOG_LCK.log ]	# On ne supprime pas le fichier log courant, si le serv est en route
 					then
 						rm $i
@@ -174,7 +180,6 @@ then
 		else
 			cd $MC_PATH
 			cat server.log >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
-			cat server.log >> $LOG_TDIR/$LOG_MASTERFILE
 		fi
 
 		if [ -e $LOG_TDIR/ip-list.log ]
@@ -279,53 +284,24 @@ then
 					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Map cartography has begun.\r"`"
 				fi
 				
-                                if [ ! -e $MAPS_PATH ]
-                                        then mkdir $MAPS_PATH
-                                fi
-
-                                umask 0002
-
-                                DATE=$(date +%d-%m-%Y-%Hh%M)
-                                FILENAME=$WORLD_NAME-map-$DATE
-                                cd $CARTO_PATH
-                                echo "Cartography in progress..."
-                                ./c10t -w $MC_PATH/$WORLD_NAME/ -o $FILENAME.png -q -s -m 4
-                                #chmod o+r *.png
-                                mv *.png $MAPS_PATH
-                                rm -f $MAPS_PATH/previous.png
-                                ln $MAPS_PATH/current.png $MAPS_PATH/previous.png
-                                rm -f $MAPS_PATH/current.png
-                                ln $MAPS_PATH/$FILENAME.png $MAPS_PATH/current.png
-                                cd $MC_PATH
-
-                                echo "Cartography is done."
-
-                                if [ $ONLINE -eq 1 ]
-                                then
-                                        echo "Issuing save-on command..."
-                                        screen -S $SCREEN_NAME -X stuff "`printf "save-on\r"`"; sleep 1
-                                        screen -S $SCREEN_NAME -X stuff "`printf "say Map cartography is done.\r"`"
-                                fi
-
-                                echo "Generating changes."
-
-                                if [ -e $MAPS_PATH/previous.png ]
-                                then
-                                        cd $MAPS_PATH
-
-                                        export RTMP=/tmp/makechanges.$$.
-
-                                        compare previous.png current.png $RTMP.1.tga
-                                        convert -transparent white $RTMP.1.tga $RTMP.2.tga
-
-                                        composite -quality 100 $RTMP.2.tga previous.png changes/changes-$FILENAME.png
-					rm -rf new.png
-                                        ln changes/changes-$FILENAME.png new.png
-                                        rm -rf previous.png $RTMP.*
-
-                                        cd $MC_PATH
-                                fi
+				mkdir -p $MAPS_PATH
 				
+				DATE=$(date +%d-%m-%Y-%Hh%M)
+				FILENAME=$WORLD_NAME-map-$DATE
+				cd $CARTO_PATH
+				echo "Cartography in progress..."
+				./c10t -w $MC_PATH/$WORLD_NAME/ -o $FILENAME.png -q -s
+				mv *.png $MAPS_PATH
+				cd $MC_PATH
+				echo "Cartography is done."
+				
+				if [ $ONLINE -eq 1 ]
+				then
+					echo "Issuing save-on command..."
+					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"; sleep 1
+					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Map cartography is done.\r"`"
+				fi
+
 			else
 				echo "The world \"$WORLD_NAME\" does not exist.";
 			fi
@@ -359,27 +335,23 @@ then
 		wget -N http://www.minecraft.net/download/minecraft_server.jar
 		if [ $SERVERMOD -eq 1 ]
 		then
-		echo "Downloading Hey0 Mod..."
-			cd $MC_PATH
+			"Downloading hey0's serverMod..."
 			mkdir -p ModTmp; cd ModTmp/
 			wget -O Minecraft_Mod.zip http://hey0.net/get.php?dl=serverbeta
 			unzip Minecraft_Mod.zip
-			cp -f version.txt $MC_PATH/version.txt
-			cp -f bin/Minecraft_Mod.jar $MC_PATH/Minecraft_Mod.jar
-			cd $MC_PATH
-			rm -rf ModTmp		
+			cp bin/Minecraft_Mod.jar $MC_PATH/Minecraft_Mod.jar
+			cd $MC_PATH; rm -rf ModTmp    
 		fi
 		if [ $RUNECRAFT -eq 1 ]
 		then
-		echo "Downloading Runecraft..."
-                        echo "Downloading Runecraft..."
-                        mkdir -p ModTmp; cd ModTmp/
-                        wget http://llama.cerberusstudios.net/runecraft_latest.zip
-                        unzip runecraft_latest.zip
-                        jar uvf $MC_PATH/minecraft_server.jar in.class o.class mm.class rm.class rn.class rt.class
-                        cd $MC_PATH; rm -rf ModTmp 
+			echo "Downloading Runecraft..."
+			mkdir -p ModTmp; cd ModTmp/
+			wget http://llama.cerberusstudios.net/runecraft_latest.zip
+			unzip runecraft_latest.zip
+			jar uvf $MC_PATH/minecraft_server.jar in.class o.class mm.class rm.class rn.class rt.class
+			cd $MC_PATH; rm -rf ModTmp 
 		fi
-		
+
 		server_launch
 		if [ $DISPLAY_ON_LAUNCH -eq 1 ]
 		then
