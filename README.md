@@ -18,11 +18,13 @@ allows to have a log history, but thats not the case for everyone.
 images to be displayed. People on my server love this feature, as they 
 know a new map is generated every day, and they can see the evolution of 
 our world.
-- I made an alias to be able to use 'minecraft command' instead of './mincraft.sh command'. It also enables the automatic completion, if 
+- I made an alias to be able to use 'minecraft command' instead of 
+'./minecraft.sh command'. It also enables the automatic completion, if 
 you type 'mine' then press tab. Much quicker =) You can do this by 
 editing /home/USER/.bashrc, and adding the line --> alias 
-minecraft="/home/minecraft/minecraft.sh" <-- (of course, change the path 
-if needed)
+  
+  minecraft="/home/minecraft/minecraft.sh" 
+of course, change the path if needed
 
 
 Configuration :
@@ -31,54 +33,44 @@ Configuration :
 There are several variables to set before you can run the script for the first time.
 Open minecraft.sh with a text editor, and edit the following lines, at the beginning of the file :
 
-### MC_PATH=/home/minecraft
+  MC_PATH=/home/minecraft
 This is the path to your minecraft folder
 
-### SERVERMOD=0
+  SERVERMOD=0
 If you are running hey0's servermod, this needs to be set to 1 (better logging and automatic updating of the mod)
 
-### RUNECRAFT=0
+  RUNECRAFT=0
 If you want your script to update runecraft automatically too, set this to 1
 
-* WORLD_NAME="world"
-
+  WORLD_NAME="world"
 This is the path to the world folder
 
-* SCREEN_NAME="minecraft"
-
+  SCREEN_NAME="minecraft"
 This is the name of the screen the server will be run on
 
-* MEMALOC=1024
-
+  MEMALOC=1024
 This is the size of RAM you want to allocate to the server
 
-* DISPLAY_ON_LAUNCH=1
-
+  DISPLAY_ON_LAUNCH=1
 Do you want the screen to be displayed each time the server starts ? 1 if yes, 0 if no.
 
-* BKUP_PATH=$MC_PATH/backup
-
+  BKUP_PATH=$MC_PATH/backup
 This is the path to the backup folder. Map backups and old log entries will go there.
 
-* BKUP_DAYS=3
-
+  BKUP_DAYS=3
 How long will the map backups be kept ? (Only used with the './minecraft.sh backup clean' command)
 
-* CARTO_PATH=$MC_PATH/carto
-
+  CARTO_PATH=$MC_PATH/carto
 This is the path to c10t's cartography script
 
-* MAPS_PATH=/var/www/minecraftMaps
-
+  MAPS_PATH=/var/www/minecraftMaps
 This is the path to the world maps folder
 
-* LOG_TDIR=/var/www/minecraftLogs
-
+  LOG_TDIR=/var/www/minecraftLogs
 This is the path to the logs folder
 
-* LOGS_DAYS=7
-
-How long will the logs be kept ? (Only used with the './minecraft.sh logs clean' command)
+  LOGS_DAYS=7
+How long will the logs be kept? **strong**(Only used with the './minecraft.sh logs clean' command)**strong**
 
 ### Detailed Command Usage
 
