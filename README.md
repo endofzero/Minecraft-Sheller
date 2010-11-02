@@ -31,16 +31,13 @@ Configuration :
 There are several variables to set before you can run the script for the first time.
 Open minecraft.sh with a text editor, and edit the following lines, at the beginning of the file :
 
-* MC_PATH=/home/minecraft
-
+### MC_PATH=/home/minecraft
 This is the path to your minecraft folder
 
-* SERVERMOD=0
-
+### SERVERMOD=0
 If you are running hey0's servermod, this needs to be set to 1 (better logging and automatic updating of the mod)
 
-* RUNECRAFT=0
-
+### RUNECRAFT=0
 If you want your script to update runecraft automatically too, set this to 1
 
 * WORLD_NAME="world"
