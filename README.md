@@ -2,7 +2,7 @@ Installation :
 ==============
 - copy the script into your minecraft server folder.
 - allow the script to be executed 
-     chmod +x minecraft.sh
+#####     chmod +x minecraft.sh
 
 - check the rights of the script user. Every folder specified in the 
 configuration phase has to be available to him.
@@ -24,7 +24,8 @@ our world.
 you type 'mine' then press tab. Much quicker =) You can do this by 
 editing /home/USER/.bashrc, and adding the line:
 
-     alias minecraft="/home/minecraft/minecraft.sh" 
+#####     alias minecraft="/home/minecraft/minecraft.sh"
+
 **(of course, change the path if needed)**
 
 Considerations:
