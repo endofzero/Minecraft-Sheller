@@ -2,8 +2,8 @@ Installation :
 ==============
 - copy the script into your minecraft server folder.
 - allow the script to be executed 
-
      chmod +x minecraft.sh
+
 - check the rights of the script user. Every folder specified in the 
 configuration phase has to be available to him.
 - edit the script to configure it (see the configuration section)
