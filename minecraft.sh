@@ -348,7 +348,7 @@ then
 			mkdir -p ModTmp; cd ModTmp/
 			wget http://llama.cerberusstudios.net/runecraft_latest.zip
 			unzip runecraft_latest.zip
-			jar uvf $MC_PATH/minecraft_server.jar rn.class rt.class jo.class mm.class p.class rm.class
+			jar uvf $MC_PATH/minecraft_server.jar jq.class mm.class q.class rm.class rn.class rt.class
 			cd $MC_PATH; rm -rf ModTmp 
 		fi
 
