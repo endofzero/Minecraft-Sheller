@@ -1,5 +1,27 @@
+Requirements:
+==============
+Java runtime environment
+Minecraft Server JAR
+Screen v4.x
+c10t (for cartography)
+unzip (for auto updating)
+
 Installation :
 ==============
+- Install the required programs
+#### Screen and unzip
+Debian:
+     sudo apt-get install screen unzip
+
+Or:
+     sudo yum install screen unzip
+
+#### c10t
+Download from the udoprog's repo:
+https://github.com/udoprog/c10t
+
+#### minecraft.sh
+
 - copy the script into your minecraft server folder.
 - allow the script to be executed 
 #####     chmod +x minecraft.sh
