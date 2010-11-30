@@ -11,6 +11,7 @@ Installation :
 - Install the required programs
 #### Screen and unzip
 Debian:
+
      sudo apt-get install screen unzip
 
 Or:
