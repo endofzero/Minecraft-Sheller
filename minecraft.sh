@@ -53,9 +53,9 @@ server_launch() {
 	echo "Launching minecraft server..."
 	if [ $SERVERMOD -eq 1 ]
 	then
-		cd $MC_PATH; screen -m -d -S $SCREEN_NAME java -Xmx${MEMALOC}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar Minecraft_Mod.jar nogui; sleep 1
+		cd $MC_PATH; screen -m -d -S $SCREEN_NAME java -server -Xmx${MEMALOC}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar Minecraft_Mod.jar nogui; sleep 1
 	else
-		cd $MC_PATH; screen -m -d -S $SCREEN_NAME java -Xmx${MEMALOC}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar minecraft_server.jar nogui; sleep 1
+		cd $MC_PATH; screen -m -d -S $SCREEN_NAME java -server -Xmx${MEMALOC}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar minecraft_server.jar nogui; sleep 1
 	fi		
 }
 	
