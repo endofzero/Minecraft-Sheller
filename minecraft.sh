@@ -336,7 +336,7 @@ then
 		wget -N http://www.minecraft.net/download/minecraft_server.jar
 		if [ $SERVERMOD -eq 1 ]
 		then
-			"Downloading hey0's serverMod..."
+			echo "Downloading hey0's serverMod..."
 			mkdir -p ModTmp; cd ModTmp/
 			wget -O Minecraft_Mod.zip http://hey0.net/get.php?dl=serverbeta
 			unzip Minecraft_Mod.zip
@@ -350,10 +350,14 @@ then
 			wget http://llama.cerberusstudios.net/runecraft_latest.zip
 			unzip runecraft_latest.zip
 <<<<<<< HEAD
+<<<<<<< HEAD
 			jar uvf $MC_PATH/minecraft_server.jar rn.class rt.class jo.class mm.class p.class rm.class
 =======
 			jar uvf $MC_PATH/minecraft_server.jar jt.class mm.class q.class rm.class rn.class rt.class
 >>>>>>> e739c5896e504e7d8b4845e3e8418c817e4786b5
+=======
+			jar uvf $MC_PATH/minecraft_server.jar ju.class mm.class q.class rm.class rn.class rt.class
+>>>>>>> 1a1c024... Echo fix and update for Runecraft 2.3
 			cd $MC_PATH; rm -rf ModTmp 
 		fi
 
