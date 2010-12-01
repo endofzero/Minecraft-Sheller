@@ -29,7 +29,8 @@ LOGS_DAYS=7
 
 if [ $SERVERMOD -eq 1 ]
 then
-        if [ -e $MC_PATH/logs/*.log.lck ]
+        locks=$(ls /logs/*.log.lck 2> /dev/null | wc -l)
+        if [ "$locks" != "0" ]
         then
                 ONLINE=1
         else
