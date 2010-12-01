@@ -1,8 +1,34 @@
+Requirements:
+==============
+- Java runtime environment
+- Minecraft Server JAR
+- Screen v4.x
+- c10t (for cartography)
+- unzip (for auto updating)
+
 Installation :
 ==============
+- Install the required programs
+### Screen and unzip
+
+Try:
+     sudo apt-get install screen unzip
+
+Or:
+     sudo yum install screen unzip
+
+### c10t
+
+- Download from the udoprog's repo:
+
+https://github.com/udoprog/c10t
+
+### minecraft.sh
+
 - copy the script into your minecraft server folder.
 - allow the script to be executed 
-     chmod +x minecraft.sh
+#####     chmod +x minecraft.sh
+
 - check the rights of the script user. Every folder specified in the 
 configuration phase has to be available to him.
 - edit the script to configure it (see the configuration section)
@@ -22,7 +48,9 @@ our world.
 './minecraft.sh command'. It also enables the automatic completion, if 
 you type 'mine' then press tab. Much quicker =) You can do this by 
 editing /home/USER/.bashrc, and adding the line:
-     alias minecraft="/home/minecraft/minecraft.sh" 
+
+#####     alias minecraft="/home/minecraft/minecraft.sh"
+
 **(of course, change the path if needed)**
 
 Considerations:

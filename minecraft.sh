@@ -53,9 +53,9 @@ server_launch() {
 	echo "Launching minecraft server..."
 	if [ $SERVERMOD -eq 1 ]
 	then
-		cd $MC_PATH; screen -m -d -S $SCREEN_NAME java -Xmx${MEMALOC}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar Minecraft_Mod.jar nogui; sleep 1
+		cd $MC_PATH; screen -m -d -S $SCREEN_NAME java -server -Xmx${MEMALOC}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar Minecraft_Mod.jar nogui; sleep 1
 	else
-		cd $MC_PATH; screen -m -d -S $SCREEN_NAME java -Xmx${MEMALOC}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar minecraft_server.jar nogui; sleep 1
+		cd $MC_PATH; screen -m -d -S $SCREEN_NAME java -server -Xmx${MEMALOC}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar minecraft_server.jar nogui; sleep 1
 	fi		
 }
 	
@@ -348,7 +348,11 @@ then
 			mkdir -p ModTmp; cd ModTmp/
 			wget http://llama.cerberusstudios.net/runecraft_latest.zip
 			unzip runecraft_latest.zip
+<<<<<<< HEAD
 			jar uvf $MC_PATH/minecraft_server.jar rn.class rt.class jo.class mm.class p.class rm.class
+=======
+			jar uvf $MC_PATH/minecraft_server.jar jt.class mm.class q.class rm.class rn.class rt.class
+>>>>>>> e739c5896e504e7d8b4845e3e8418c817e4786b5
 			cd $MC_PATH; rm -rf ModTmp 
 		fi
 
