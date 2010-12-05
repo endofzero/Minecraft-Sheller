@@ -350,6 +350,7 @@ then
 			mkdir -p ModTmp; cd ModTmp/
 			wget -O Minecraft_Mod.zip http://hey0.net/get.php?dl=serverbeta
 			unzip Minecraft_Mod.zip
+                        cp -f version.txt $MC_PATH/version.txt
 			cp bin/Minecraft_Mod.jar $MC_PATH/Minecraft_Mod.jar
 			cd $MC_PATH; rm -rf ModTmp    
 		fi
