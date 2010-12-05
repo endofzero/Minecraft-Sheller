@@ -127,7 +127,16 @@ then
 		then
 			display
 		fi;;
-		
+
+	#################################################################
+	"say")
+		if [ $ONLINE -eq 1 ]
+		then
+			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say $2\r"`";sleep 1
+		else
+			echo "Server seems to be offline..."
+		fi;;
+
 	#################################################################
 	"logs")
 		mkdir -p $LOG_TDIR		
@@ -362,7 +371,7 @@ then
 				
 	#################################################################
 	*)
-		echo "Usage : minecraft <status | start [force] | stop | restart [warn] | logs [clean] | backup [full] | cartography | update>";
+		echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | logs [clean] | backup [full] | cartography | update>";
 	esac
 
 else
