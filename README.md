@@ -93,8 +93,17 @@ Do you want the screen to be displayed each time the server starts? 1 if yes, 0 
     BKUP_PATH=$MC_PATH/backup
 This is the path to the backup folder. Map backups and old log entries will go there.
 
-    BKUP_DAYS=3
-How long will the map backups be kept? _(Only used with the './minecraft.sh backup clean' command)_
+    BKUP_DAYS_INCR=3
+How long will incremental map backups be kept? _(Only used with the './minecraft.sh backup full' command)_
+
+    BKUP_DAYS_FULL=3
+How long will full map backups be kept? _(Only used with the './minecraft.sh backup full' command)_
+
+    BACKUP_FULL_LINK=${BKUP_PATH}/${WORLD_NAME}_full.tgz
+Naming convention for full backups.
+
+    BACKUP_INCR_LINK=${BKUP_PATH}/${WORLD_NAME}_incr.tgz
+Naming convention for incremental backups.
 
     CARTO_PATH=$MC_PATH/carto
 This is the path to c10t's cartography script
@@ -126,9 +135,9 @@ If the warn option is specified, it will display a warnning 30s & 10s before the
 Parses logs into several files, grouped into a folder named with the date of the logging.
 If the clean option is specified, it will move the older folders into the backup folder.
 Again, this command should be issues before a server restart.
-##### ./minecraft.sh backup [clean]
+##### ./minecraft.sh backup [full]
 Displays a message to the players if the server is online, stops the writing of chunks, create a dated archive and backs up the 
-world folder. If the clean option is specified, it will delete the older archives.
+world folder. If the full option is specified, it will delete the older incremental and full archives based on the settings.
 ##### ./minecraft.sh cartography
 Displays a message to the players if the server is online, stops the writing of chunks, initiates c10t's cartography script.
 I strongly recommend the MAPS_PATH to be a internet public folder.
