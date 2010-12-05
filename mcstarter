@@ -1,0 +1,24 @@
+#!/bin/bash
+    # /etc/init.d/mcstarter
+    ### BEGIN INIT INFO
+    # Provides:             minecraft
+    # Required-Start:    $remote_fs $syslog
+    # Required-Stop:     $remote_fs $syslog
+    # Default-Start:     2 3 4 5
+    # Default-Stop:      0 1 6
+    # Short-Description: Start minecraft at boot time
+    # Description:          Start minecraft at boot time
+    ### END INIT INFO
+
+    case "$1" in
+        start)
+            su minecraft -c "'../../home/smp/path/to/minecraft/script' start"
+            ;;
+        stop)
+            su minecraft -c "'../../home/smp/path/to/minecraft/script' stop"
+            ;;
+         *)
+            echo "Usage: /etc/init.d/mcstarter {start|stop}"   
+            exit 1
+            ;;
+    esac
