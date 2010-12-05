@@ -47,7 +47,7 @@ else
 fi
 
 display() {
-	screen -R $SCREEN_NAME
+	screen -x $SCREEN_NAME
 }
 
 server_launch() {
@@ -203,6 +203,7 @@ then
 	"backup")
 
 		mkdir -p $BKUP_PATH
+		cd $BKUP_PATH
 			
 		if [ -e $MC_PATH/$WORLD_NAME ]
 		then
