@@ -26,6 +26,12 @@ MAPS_PATH=/var/www/minecraftMaps
 LOG_TDIR=/var/www/minecraftLogs
 LOGS_DAYS=7
 
+#Minecraft-Overviewer
+MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
+MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview/
+MCOVERVIEWER_CACHE_PATH=/var/www/minecraft/maps/Overview/cache/
+
+
 # 	End of configuration
 
 if [ $SERVERMOD -eq 1 ]
@@ -320,6 +326,43 @@ then
 		else
 			echo "The path to cartographier seems to be wrong."
 		fi;;
+
+      #################################################################
+      "overviewer")
+         
+         	if [ -e $MCOVERVIEWER_PATH ]
+         	then
+            		if [ -e $MC_PATH/$WORLD_NAME ]
+            		then
+               			if [ $ONLINE -eq 1 ]
+               			then
+                  			echo "Issuing save-all command, wait 5s...";
+                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"; sleep 5
+                  			echo "Issuing save-off command...";
+                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"; sleep 1
+                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Minecraft-Overviewer has started.\r"`"
+                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Saving IS OFF, this may take some time.\r"`"
+               			fi
+               
+               			mkdir -p $MCOVERVIEWER_MAPS_PATH
+               
+               			echo "Minecraft-Overviewer in progress..."
+               			python $MCOVERVIEWER_PATH/gmap.py --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$WORLD_NAME $MCOVERVIEWER_MAPS_PATH
+               			echo "Minecraft-Overviewer is done."
+               
+               			if [ $ONLINE -eq 1 ]
+               			then
+                  			echo "Issuing save-on command..."
+                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"; sleep 1
+                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Minecraft-Overviewer is done.\r"`"
+               			fi
+               
+            		else
+               			echo "The world \"$WORLD_NAME\" does not exist.";
+            		fi
+         	else
+            		echo "The path to Minecraft-Overviewer seems to be wrong."
+         	fi;;
 	
 	#################################################################
 	"update")
