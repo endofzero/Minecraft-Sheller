@@ -345,7 +345,7 @@ then
                   			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"; sleep 5
                   			echo "Issuing save-off command...";
                   			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"; sleep 1
-                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Minecraft-Overviewer has started.\r"`"
+                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Minecraft-Overviewer has started.\r"`"; sleep 1
                   			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Saving IS OFF, this may take some time.\r"`"
                			fi
                
