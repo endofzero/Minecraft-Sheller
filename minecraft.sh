@@ -260,7 +260,7 @@ then
                 # Now make our full backup
                 pushd $MC_PATH
                 find $WORLD_NAME -type f -print > $BACKUP_FILES
-                tar -zcvf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
+                tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
                 popd
 
                 rm -f $BACKUP_FULL_LINK $BACKUP_INCR_LINK
@@ -271,7 +271,7 @@ then
 
                 pushd $MC_PATH
                 find $WORLD_NAME -newer $BACKUP_FULL_LINK -type f -print > $BACKUP_FILES
-                tar -zcvf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
+                tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
                 popd
 
                 rm -f $BACKUP_INCR_LINK
