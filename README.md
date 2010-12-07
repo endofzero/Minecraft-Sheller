@@ -3,7 +3,8 @@ Requirements:
 - Java runtime environment
 - Minecraft Server JAR
 - Screen v4.x
-- c10t (for cartography)
+- c10t (for cartography to work)
+- brownan's overviewer script (for overviewer to work)
 - unzip (for auto updating)
 
 Installation :
@@ -19,9 +20,15 @@ Or:
 
 ### c10t
 
-- Download from the udoprog's repo:
+- Download from udoprog's repo:
 
 https://github.com/udoprog/c10t
+
+### Minecraft-Overviewer
+
+- Download from brownan's repo:
+
+http://github.com/brownan/Minecraft-Overviewer
 
 ### minecraft.sh
 
