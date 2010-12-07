@@ -22,13 +22,13 @@ Or:
 
 - Download from udoprog's repo:
 
-https://github.com/udoprog/c10t
+(https://github.com/udoprog/c10t)
 
 ### Minecraft-Overviewer
 
 - Download from brownan's repo:
 
-http://github.com/brownan/Minecraft-Overviewer
+(http://github.com/brownan/Minecraft-Overviewer)
 
 ### minecraft.sh
 
