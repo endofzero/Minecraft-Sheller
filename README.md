@@ -69,14 +69,7 @@ Configuration :
 There are several variables to set before you can run the script for the first time.
 Open minecraft.sh with a text editor, and edit the following lines, at the beginning of the file :
 
-    MC_PATH=/home/minecraft
-This is the path to your minecraft folder
-
-    SERVERMOD=0
-If you are running hey0's servermod, this needs to be set to 1 _(better logging and automatic updating of the mod)_
-
-    RUNECRAFT=0
-If you want your script to update runecraft automatically too, set this to 1
+**Main Settings**
 
     WORLD_NAME="world"
 This is the path to the world folder
@@ -84,11 +77,27 @@ This is the path to the world folder
     SCREEN_NAME="minecraft"
 This is the name of the screen the server will be run on
 
+    MEMMAX=1024
+This is the maximum size of RAM you want to allow the server to use, if you are not sure, keep this and MEMALOC identical.
+
     MEMALOC=1024
 This is the size of RAM you want to allocate to the server
 
     DISPLAY_ON_LAUNCH=1
 Do you want the screen to be displayed each time the server starts? 1 if yes, 0 if no.
+
+    MC_PATH=/home/minecraft
+This is the path to your minecraft folder
+
+**Modifications**
+
+    SERVERMOD=0
+If you are running hey0's servermod, this needs to be set to 1 _(better logging and automatic updating of the mod)_
+
+    RUNECRAFT=0
+If you want your script to update runecraft automatically too, set this to 1
+
+**Backups**
 
     BKUP_PATH=$MC_PATH/backup
 This is the path to the backup folder. Map backups and old log entries will go there.
@@ -105,17 +114,30 @@ Naming convention for full backups.
     BACKUP_INCR_LINK=${BKUP_PATH}/${WORLD_NAME}_incr.tgz
 Naming convention for incremental backups.
 
-    CARTO_PATH=$MC_PATH/carto
-This is the path to c10t's cartography script
-
-    MAPS_PATH=/var/www/minecraftMaps
-This is the path to the world maps folder
+**Logs**
 
     LOG_TDIR=/var/www/minecraftLogs
 This is the path to the logs folder
 
     LOGS_DAYS=7
 How long will the logs be kept? _(Only used with the './minecraft.sh logs clean' command)_
+
+**Mapping**
+
+    CARTO_PATH=$MC_PATH/carto
+This is the path to c10t's cartography script
+
+    MAPS_PATH=/var/www/minecraftMaps
+This is the path to the world maps folder
+
+    MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
+This is the path to Overviewer (gmap.py)
+
+    MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview/
+This is the location where Overviewer will render
+
+    MCOVERVIEWER_CACHE_PATH=/var/www/minecraft/maps/Overview/cache/
+This is the path for the cache directory for Overviewer
 
 ### Detailed Command Usage
 
@@ -140,7 +162,10 @@ Displays a message to the players if the server is online, stops the writing of 
 world folder. If the full option is specified, it will delete the older incremental and full archives based on the settings.
 ##### ./minecraft.sh cartography
 Displays a message to the players if the server is online, stops the writing of chunks, initiates c10t's cartography script.
-I strongly recommend the MAPS_PATH to be a internet public folder.
+I strongly recommend the MAPS_PATH to be an internet public folder.
+##### ./minecraft.sh overviewer
+Displays a message to the players if the server is online, stops the writing of chunks, initiates Brownan's Overviewer script.
+I strongly recommend the MCOVERVIER_MAPS_PATH to be an internet public folder as well.
 ##### ./minecraft.sh update
 Stops the server if it is online, backs up the old binairies, downloads the last binaries from mincraft.net and restarts 
 the server.
