@@ -247,7 +247,7 @@ then
             FILENAME=$WORLD_NAME-$DATE
             BACKUP_FILES=$BKUP_PATH/list.$DATE
 
-                if [ $2 == "full" ]
+                if [ full == $2 ]
                 then
 		# If full flag set, Make full backup, and remove old incrementals
                 FILENAME=$FILENAME-full.tgz
