@@ -37,7 +37,7 @@ CARTO_OPTIONS="-q -s"
 MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
 MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview/
 MCOVERVIEWER_CACHE_PATH=/var/www/minecraft/maps/Overview/cache/
-
+MCOVERVIEWER_OPTIONS="--lighting"
 
 # 	End of configuration
 
@@ -354,7 +354,7 @@ then
                			mkdir -p $MCOVERVIEWER_MAPS_PATH
                
                			echo "Minecraft-Overviewer in progress..."
-               			python $MCOVERVIEWER_PATH/gmap.py --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$WORLD_NAME $MCOVERVIEWER_MAPS_PATH
+               			python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$WORLD_NAME $MCOVERVIEWER_MAPS_PATH
                			echo "Minecraft-Overviewer is done."
                
                			if [ $ONLINE -eq 1 ]
