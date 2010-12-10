@@ -137,6 +137,9 @@ This is the path to c10t's cartography script
     MAPS_PATH=/var/www/minecraftMaps
 This is the path to the world maps folder
 
+    CARTO_OPTIONS="-q -s"
+This contains all of the options you want when running cartography.
+
     MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
 This is the path to Overviewer (gmap.py)
 
