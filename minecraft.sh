@@ -227,57 +227,6 @@ if [ $# -gt 0 ]; then
 			mkdir -p $BKUP_PATH
 			cd $BKUP_PATH
 
-<<<<<<< HEAD
-            DATE=$(date +%Y-%m-%d-%Hh%M)
-            FILENAME=$WORLD_NAME-$DATE
-            BACKUP_FILES=$BKUP_PATH/list.$DATE
-
-                if [ full == $2 ]
-                then
-		# If full flag set, Make full backup, and remove old incrementals
-                FILENAME=$FILENAME-full.tgz
-
-                # Remove incrementals older than $BKUP_DAYS_INCR
-                # Remove full archives older than $BKUP_DAYS_FULL
-                find ./$WORLD_NAME-*-incr.tgz -type f -mtime +$BKUP_DAYS_INCR -print > purgelist
-                find ./$WORLD_NAME-*-full.tgz -type f -mtime +$BKUP_DAYS_FULL -print >> purgelist
-                rm -f `cat purgelist`
-                rm -f purgelist
-
-                # Now make our full backup
-                pushd $MC_PATH
-                find $WORLD_NAME -type f -print > $BACKUP_FILES
-                tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
-                popd
-
-                rm -f $BACKUP_FULL_LINK $BACKUP_INCR_LINK
-                ln -s $FILENAME $BACKUP_FULL_LINK
-            else
-                # Make incremental backup
-                FILENAME=$FILENAME-incr.tgz
-
-                pushd $MC_PATH
-                find $WORLD_NAME -newer $BACKUP_FULL_LINK -type f -print > $BACKUP_FILES
-                tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
-                popd
-
-                rm -f $BACKUP_INCR_LINK
-                ln -s $FILENAME $BACKUP_INCR_LINK
-            fi
-
-            rm -f $BACKUP_FILES
-			
-			if [ $ONLINE -eq 1 ]
-			then
-				echo "Issuing save-on command..."
-				screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"; sleep 1
-				screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Backup is done, have fun !\r"`"
-			fi
-			echo "Backup process is over."
-		else
-			echo "The world \"$WORLD_NAME\" does not exist.";
-		fi;;
-=======
 			if [ -e $MC_PATH/$WORLD_NAME ]; then
 				if [ $ONLINE -eq 1 ]; then 
 					echo "Server running, warning players : backup in 10s."
@@ -291,7 +240,6 @@ if [ $# -gt 0 ]; then
 					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"
 					sleep 1
 				fi
->>>>>>> dopeghoti-master
 
 				cd $BKUP_PATH
 
@@ -299,7 +247,7 @@ if [ $# -gt 0 ]; then
 				FILENAME=$WORLD_NAME-$DATE
 				BACKUP_FILES=$BKUP_PATH/list.$DATE
 
-				if [ full == $2 ]; then
+				if [ "full" == $2 ]; then
 					# If full flag set, Make full backup, and remove old incrementals
 					FILENAME=$FILENAME-full.tgz
 
@@ -381,47 +329,6 @@ if [ $# -gt 0 ]; then
 			fi
 		else
 			echo "The path to cartographier seems to be wrong."
-<<<<<<< HEAD
-		fi;;
-
-      #################################################################
-      "overviewer")
-         
-         	if [ -e $MCOVERVIEWER_PATH ]
-         	then
-            		if [ -e $MC_PATH/$WORLD_NAME ]
-            		then
-               			if [ $ONLINE -eq 1 ]
-               			then
-                  			echo "Issuing save-all command, wait 5s...";
-                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"; sleep 5
-                  			echo "Issuing save-off command...";
-                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"; sleep 1
-                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Minecraft-Overviewer has started.\r"`"; sleep 1
-                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Saving IS OFF, this may take some time.\r"`"
-               			fi
-               
-               			mkdir -p $MCOVERVIEWER_MAPS_PATH
-               
-               			echo "Minecraft-Overviewer in progress..."
-               			python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$WORLD_NAME $MCOVERVIEWER_MAPS_PATH
-               			echo "Minecraft-Overviewer is done."
-               
-               			if [ $ONLINE -eq 1 ]
-               			then
-                  			echo "Issuing save-on command..."
-                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"; sleep 1
-                  			screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Minecraft-Overviewer is done.\r"`"
-               			fi
-               
-            		else
-               			echo "The world \"$WORLD_NAME\" does not exist.";
-            		fi
-         	else
-            		echo "The path to Minecraft-Overviewer seems to be wrong."
-         	fi;;
-	
-=======
 		fi
 	;;
 	#################################################################
@@ -443,7 +350,7 @@ if [ $# -gt 0 ]; then
 				mkdir -p $MCOVERVIEWER_MAPS_PATH
 
 				echo "Minecraft-Overviewer in progress..."
-				python $MCOVERVIEWER_PATH/gmap.py --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$WORLD_NAME $MCOVERVIEWER_MAPS_PATH
+				python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$WORLD_NAME $MCOVERVIEWER_MAPS_PATH
 				echo "Minecraft-Overviewer is done."
 
 				if [ 1 -eq $ONLINE ]; then
@@ -460,7 +367,6 @@ if [ $# -gt 0 ]; then
 			echo "The path to Minecraft-Overviewer seems to be wrong."
 		fi
 	;;
->>>>>>> dopeghoti-master
 	#################################################################
 	"update")
 		if [ 1 -eq $ONLINE ]; then
