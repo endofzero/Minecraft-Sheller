@@ -199,7 +199,7 @@ if [ $# -gt 0 ]; then
 				for i in *; do
 					if [ $i != $LOG_LCK.log.lck ]; then # skip du fichier lck
 						cat $i >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
-						cat server.log >> $LOG_TDIR/$LOG_MASTERFILE
+						cat $i >> $LOG_TDIR/$LOG_MASTERFILE
 						if [ $i != $LOG_LCK.log ]; then	# On ne supprime pas le fichier log courant, si le serv est en route
 							rm $i
 						fi
