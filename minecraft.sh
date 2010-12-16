@@ -11,12 +11,12 @@ WORLD_NAME="world"
 MC_PATH=/home/minecraft
 SCREEN_NAME="minecraft"
 MEMMAX=1024
-MEMALOC=512
-DISPLAY_ON_LAUNCH=1
+MEMALOC=1024
+DISPLAY_ON_LAUNCH=0
 
 # Modifications
-SERVERMOD=0
-RUNECRAFT=0
+SERVERMOD=1
+RUNECRAFT=1
 
 # Backups
 BKUP_PATH=$MC_PATH/backup
@@ -26,13 +26,13 @@ BACKUP_FULL_LINK=${BKUP_PATH}/${WORLD_NAME}_full.tgz
 BACKUP_INCR_LINK=${BKUP_PATH}/${WORLD_NAME}_incr.tgz
 
 # Logs
-LOG_TDIR=/var/www/minecraftLogs
+LOG_TDIR=/var/www/minecraft/logs
 LOGS_DAYS=7
 
 # Mapping
 CARTO_PATH=$MC_PATH/carto
-MAPS_PATH=/var/www/minecraftMaps
-CARTO_OPTIONS="-q -s"
+MAPS_PATH=/var/www/minecraft/maps
+CARTO_OPTIONS="-q -s -m 4"
 
 MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
 MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview/
