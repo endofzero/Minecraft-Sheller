@@ -34,8 +34,6 @@ LOG_MASTERFILE=master-log.log
 CARTO_PATH=$MC_PATH/carto
 MAPS_PATH=/var/www/minecraft/maps
 CARTO_OPTIONS="-q -s -m 4"
-MAPS_PATH=/var/www/minecraftMaps
-CARTO_OPTIONS="-q -s"
 BIOME_PATH=/home/minecraft/BiomeExtractor
 
 MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
@@ -347,7 +345,7 @@ if [ $# -gt 0 ]; then
 					sleep 5
 					echo "Issuing save-off command..."
 					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"
-					sleep 1
+					sleep 5
 					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Biome Extraction has begun.\r"`"
 				fi
 
@@ -357,8 +355,9 @@ if [ $# -gt 0 ]; then
 
 				if [ 1 -eq $ONLINE ]; then
 					echo "Issuing save-on command..."
+					sleep 3
 					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
-					sleep 1
+					sleep 5
 					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Biome extraction is complete.\r"`"
 				fi
 
