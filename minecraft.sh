@@ -33,6 +33,7 @@ LOGS_DAYS=7
 CARTO_PATH=$MC_PATH/carto
 MAPS_PATH=/var/www/minecraftMaps
 CARTO_OPTIONS="-q -s"
+BIOME_PATH=/home/minecraft/BiomeExtractor
 
 MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
 MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview/
@@ -329,6 +330,38 @@ if [ $# -gt 0 ]; then
 			fi
 		else
 			echo "The path to cartographier seems to be wrong."
+		fi
+		;;
+		#################################################################
+		"biome")
+		if [ -e $BIOME_PATH ]; then
+			if [ -e $MC_PATH/$WORLD_NAME ]; then
+				if [ 1 -eq $ONLINE ]; then
+					echo "Issuing save-all command, wait 5s...";
+					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
+					sleep 5
+					echo "Issuing save-off command..."
+					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"
+					sleep 1
+					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Biome Extraction has begun.\r"`"
+				fi
+
+				echo "Biome extraction in progress..."
+				java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui $MC_PATH/$WORLD_NAME/
+				echo "Biome extraction is complete."
+
+				if [ 1 -eq $ONLINE ]; then
+					echo "Issuing save-on command..."
+					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
+					sleep 1
+					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Biome extraction is complete.\r"`"
+				fi
+
+			else
+				echo "The world \"$WORLD_NAME\" does not exist."
+			fi
+		else
+			echo "The path to MinecraftBiomeExtractor.jar seems to be wrong."
 		fi
 	;;
 	#################################################################
