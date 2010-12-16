@@ -32,14 +32,11 @@ LOG_MASTERFILE=master-log.log
 
 # Mapping
 CARTO_PATH=$MC_PATH/carto
-<<<<<<< HEAD
 MAPS_PATH=/var/www/minecraft/maps
 CARTO_OPTIONS="-q -s -m 4"
-=======
 MAPS_PATH=/var/www/minecraftMaps
 CARTO_OPTIONS="-q -s"
 BIOME_PATH=/home/minecraft/BiomeExtractor
->>>>>>> testing
 
 MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
 MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview/
