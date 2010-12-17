@@ -66,10 +66,12 @@ display() {
 server_launch() {
 	echo "Launching minecraft server..."
 	if [ 1 -eq $SERVERMOD ]; then
+		echo "Minecraft_Mod.jar"
 		cd $MC_PATH
 		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar Minecraft_Mod.jar nogui
 		sleep 1
 	else
+		echo "minecraft_server.jar"
 		cd $MC_PATH
 		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar minecraft_server.jar nogui
 		sleep 1
@@ -354,8 +356,9 @@ if [ $# -gt 0 ]; then
 				echo "Biome extraction is complete."
 
 				if [ 1 -eq $ONLINE ]; then
-					echo "Issuing save-on command..."
-					sleep 3
+					sleep 5
+					echo "Issuing save-on command in 60 seconds..."
+					sleep 60
 					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
 					sleep 5
 					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Biome extraction is complete.\r"`"
