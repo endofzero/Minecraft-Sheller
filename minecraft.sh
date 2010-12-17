@@ -59,6 +59,25 @@ else
 	fi
 fi
 
+#	Get the PID of our Java process for later use.  Better
+#	than just killing the lowest PID java process like the
+#	original verison did, but still non-optimal.
+#
+#	Explanation: 
+#
+#	Find the PID of our screen that's running Minecraft.
+#	Then, use PS to find children of that screen whose
+#	command is 'java'.
+
+SCREEN_PID=$(screen -ls | grep $SCREEN_NAME | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
+if [ -z $SCREEN_PID ]; then
+	#	Our server seems offline, because there's no screen running.
+	#	Set MC_PID to a null value.
+	MC_PID=''
+else
+	MC_PID=$(ps --ppid $SCREEN_PID -F -C java | tail -1 | awk '{print $2}')
+fi
+
 display() {
 	screen -x $SCREEN_NAME
 }
@@ -101,12 +120,16 @@ if [ $# -gt 0 ]; then
 				case $2 in
 					"force")
 						#	TODO:
-						#	This needs badly to be rewritten to not
-						#	kill all Java processes running on the
-						#	server.  This is very bad form.  Possibly
-						#	look at screen -ls to pick out the pid, 
-						#	and grep _that_ tree for Java?
-						kill `ps -e | grep java | cut -d " " -f 1`
+						#	Still needs work, but at least we try
+						#	to use the PID we grabbed earlier.
+						#	The fallback is still to blindly
+						#	kill the lowest-PID Java process running
+						#	on the 	server.  This is very bad form.
+						if [ -z $MC_PID ]; then
+							kill `ps -e | grep java | cut -d " " -f 1`
+						else
+							kill $MC_PID
+						fi
 						rm -fr $MC_PATH/*.log.lck 2> /dev/null/;;
 				esac
 			else
@@ -126,12 +149,16 @@ if [ $# -gt 0 ]; then
 					"force")
 						echo "Forcing server to stop if it's lying.."
 						#	TODO:
-						#	This needs badly to be rewritten to not
-						#	kill all Java processes running on the
-						#	server.  This is very bad form.  Possibly
-						#	look at screen -ls to pick out the pid, 
-						#	and grep _that_ tree for Java?
-						kill `ps -e | grep java | cut -d " " -f 1`
+						#	Still needs work, but at least we try
+						#	to use the PID we grabbed earlier.
+						#	The fallback is still to blindly
+						#	kill the lowest-PID Java process running
+						#	on the 	server.  This is very bad form.
+						if [ -z $MC_PID ]; then
+							kill `ps -e | grep java | cut -d " " -f 1`
+						else
+							kill $MC_PID
+						fi
 						rm -fr $MC_PATH/*.log.lck 2> /dev/null/
 					;;
 				esac
@@ -300,165 +327,163 @@ if [ $# -gt 0 ]; then
 		;;
 		#################################################################
 		"cartography")
-		if [ -e $CARTO_PATH ]; then
-			if [ -e $MC_PATH/$WORLD_NAME ]; then
-				if [ 1 -eq $ONLINE ]; then
-					echo "Issuing save-all command, wait 5s...";
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
-					sleep 5
-					echo "Issuing save-off command..."
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"
-					sleep 1
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Map cartography has begun.\r"`"
+			if [ -e $CARTO_PATH ]; then
+				if [ -e $MC_PATH/$WORLD_NAME ]; then
+					if [ 1 -eq $ONLINE ]; then
+						echo "Issuing save-all command, wait 5s...";
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
+						sleep 5
+						echo "Issuing save-off command..."
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"
+						sleep 1
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Map cartography has begun.\r"`"
+					fi
+
+					mkdir -p $MAPS_PATH
+
+					DATE=$(date +%d-%m-%Y-%Hh%M)
+					FILENAME=$WORLD_NAME-map-$DATE
+					cd $CARTO_PATH
+					echo "Cartography in progress..."
+					./c10t -w $MC_PATH/$WORLD_NAME/ -o $FILENAME.png $CARTO_OPTIONS
+					mv *.png $MAPS_PATH
+					cd $MC_PATH
+					echo "Cartography is done."
+
+					if [ 1 -eq $ONLINE ]; then
+						echo "Issuing save-on command..."
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
+						sleep 1
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Map cartography is done.\r"`"
+					fi
+
+				else
+					echo "The world \"$WORLD_NAME\" does not exist."
 				fi
-
-				mkdir -p $MAPS_PATH
-
-				DATE=$(date +%d-%m-%Y-%Hh%M)
-				FILENAME=$WORLD_NAME-map-$DATE
-				cd $CARTO_PATH
-				echo "Cartography in progress..."
-				./c10t -w $MC_PATH/$WORLD_NAME/ -o $FILENAME.png $CARTO_OPTIONS
-				mv *.png $MAPS_PATH
-				cd $MC_PATH
-				echo "Cartography is done."
-
-				if [ 1 -eq $ONLINE ]; then
-					echo "Issuing save-on command..."
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
-					sleep 1
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Map cartography is done.\r"`"
-				fi
-
 			else
-				echo "The world \"$WORLD_NAME\" does not exist."
+				echo "The path to cartographier seems to be wrong."
 			fi
-		else
-			echo "The path to cartographier seems to be wrong."
-		fi
 		;;
 		#################################################################
 		"biome")
-		if [ -e $BIOME_PATH ]; then
-			if [ -e $MC_PATH/$WORLD_NAME ]; then
-				if [ 1 -eq $ONLINE ]; then
-					echo "Issuing save-all command, wait 5s...";
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
-					sleep 5
-					echo "Issuing save-off command..."
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"
-					sleep 5
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Biome Extraction has begun.\r"`"
+			if [ -e $BIOME_PATH ]; then
+				if [ -e $MC_PATH/$WORLD_NAME ]; then
+					if [ 1 -eq $ONLINE ]; then
+						echo "Issuing save-all command, wait 5s...";
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
+						sleep 5
+						echo "Issuing save-off command..."
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"
+						sleep 1
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Biome Extraction has begun.\r"`"
+					fi
+
+					echo "Biome extraction in progress..."
+					java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui $MC_PATH/$WORLD_NAME/
+					echo "Biome extraction is complete."
+
+					if [ 1 -eq $ONLINE ]; then
+						echo "Issuing save-on command..."
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
+						sleep 1
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Biome extraction is complete.\r"`"
+					fi
+
+				else
+					echo "The world \"$WORLD_NAME\" does not exist."
 				fi
-
-				echo "Biome extraction in progress..."
-				java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui $MC_PATH/$WORLD_NAME/
-				echo "Biome extraction is complete."
-
-				if [ 1 -eq $ONLINE ]; then
-					sleep 5
-					echo "Issuing save-on command in 60 seconds..."
-					sleep 60
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
-					sleep 5
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Biome extraction is complete.\r"`"
-				fi
-
 			else
-				echo "The world \"$WORLD_NAME\" does not exist."
+				echo "The path to MinecraftBiomeExtractor.jar seems to be wrong."
 			fi
-		else
-			echo "The path to MinecraftBiomeExtractor.jar seems to be wrong."
-		fi
-	;;
-	#################################################################
-	"overviewer")
-		if [ -e $MCOVERVIEWER_PATH ];  then
-			if [ -e $MC_PATH/$WORLD_NAME ]; then
-				if [ 1 -eq $ONLINE ]; then
-					echo "Issuing save-all command, wait 5s..."
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
-					sleep 5
-					echo "Issuing save-off command...";
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"
-					sleep 1
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Minecraft-Overviewer has started.\r"`"
-					sleep 1
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Saving IS OFF, this may take some time.\r"`"
+		;;
+		#################################################################
+		"overviewer")
+			if [ -e $MCOVERVIEWER_PATH ];  then
+				if [ -e $MC_PATH/$WORLD_NAME ]; then
+					if [ 1 -eq $ONLINE ]; then
+						echo "Issuing save-all command, wait 5s..."
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
+						sleep 5
+						echo "Issuing save-off command...";
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"
+						sleep 1
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Minecraft-Overviewer has started.\r"`"
+						sleep 1
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Saving IS OFF, this may take some time.\r"`"
+					fi
+
+					mkdir -p $MCOVERVIEWER_MAPS_PATH
+
+					echo "Minecraft-Overviewer in progress..."
+					python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$WORLD_NAME $MCOVERVIEWER_MAPS_PATH
+					echo "Minecraft-Overviewer is done."
+
+					if [ 1 -eq $ONLINE ]; then
+						echo "Issuing save-on command..."
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
+						sleep 1
+						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Minecraft-Overviewer is done.\r"`"
+					fi
+
+				else
+					echo "The world \"$WORLD_NAME\" does not exist.";
 				fi
-
-				mkdir -p $MCOVERVIEWER_MAPS_PATH
-
-				echo "Minecraft-Overviewer in progress..."
-				python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$WORLD_NAME $MCOVERVIEWER_MAPS_PATH
-				echo "Minecraft-Overviewer is done."
-
-				if [ 1 -eq $ONLINE ]; then
-					echo "Issuing save-on command..."
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
-					sleep 1
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Minecraft-Overviewer is done.\r"`"
-				fi
-
 			else
-				echo "The world \"$WORLD_NAME\" does not exist.";
+				echo "The path to Minecraft-Overviewer seems to be wrong."
 			fi
-		else
-			echo "The path to Minecraft-Overviewer seems to be wrong."
-		fi
-	;;
-	#################################################################
-	"update")
-		if [ 1 -eq $ONLINE ]; then
-			server_stop
-		fi
+		;;
+		#################################################################
+		"update")
+			if [ 1 -eq $ONLINE ]; then
+				server_stop
+			fi
 
-		mkdir -p $BKUP_PATH
+			mkdir -p $BKUP_PATH
 
-		echo "Backing up current binaries..."
-		DATE=$(date +%d-%m-%Y)			
-		cd $MC_PATH
-		if [ 1 -eq $SERVERMOD ]; then
-			tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar Minecraft_Mod.jar
-			rm Minecraft_Mod.jar
-		else
-			tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar
-		fi
-		mv minecraft_server-$DATE.tar.gz $BKUP_PATH
-
-		echo "Downloading new binaries..."
-		wget -N http://www.minecraft.net/download/minecraft_server.jar
-		if [ 1 -eq $SERVERMOD ]; then
-			echo "Downloading hey0's serverMod..."
-			mkdir -p ModTmp
-			cd ModTmp/
-			wget -O Minecraft_Mod.zip http://hey0.net/get.php?dl=serverbeta
-			unzip Minecraft_Mod.zip
-			cp -f version.txt $MC_PATH/version.txt
-			cp bin/Minecraft_Mod.jar $MC_PATH/Minecraft_Mod.jar
+			echo "Backing up current binaries..."
+			DATE=$(date +%d-%m-%Y)			
 			cd $MC_PATH
-			rm -rf ModTmp    
-		fi
-		if [ 1 -eq $RUNECRAFT ];  then
-			echo "Downloading Runecraft..."
-			mkdir -p ModTmp
-			cd ModTmp/
-			wget http://llama.cerberusstudios.net/runecraft_latest.zip
-			unzip runecraft_latest.zip
-			jar uvf $MC_PATH/minecraft_server.jar *.class
-			cd $MC_PATH
-			rm -rf ModTmp 
-		fi
+			if [ 1 -eq $SERVERMOD ]; then
+				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar Minecraft_Mod.jar
+				rm Minecraft_Mod.jar
+			else
+				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar
+			fi
+			mv minecraft_server-$DATE.tar.gz $BKUP_PATH
 
-		server_launch
-		if [ 1 -eq $DISPLAY_ON_LAUNCH ]; then
-			display
-		fi
-	;;
-	#################################################################
-	*)
-		echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | logs [clean] | backup [full] | cartography | update>"
-	;;
+			echo "Downloading new binaries..."
+			wget -N http://www.minecraft.net/download/minecraft_server.jar
+			if [ 1 -eq $SERVERMOD ]; then
+				echo "Downloading hey0's serverMod..."
+				mkdir -p ModTmp
+				cd ModTmp/
+				wget -O Minecraft_Mod.zip http://hey0.net/get.php?dl=serverbeta
+				unzip Minecraft_Mod.zip
+				cp -f version.txt $MC_PATH/version.txt
+				cp bin/Minecraft_Mod.jar $MC_PATH/Minecraft_Mod.jar
+				cd $MC_PATH
+				rm -rf ModTmp    
+			fi
+			if [ 1 -eq $RUNECRAFT ];  then
+				echo "Downloading Runecraft..."
+				mkdir -p ModTmp
+				cd ModTmp/
+				wget http://llama.cerberusstudios.net/runecraft_latest.zip
+				unzip runecraft_latest.zip
+				jar uvf $MC_PATH/minecraft_server.jar *.class
+				cd $MC_PATH
+				rm -rf ModTmp 
+			fi
+
+			server_launch
+			if [ 1 -eq $DISPLAY_ON_LAUNCH ]; then
+				display
+			fi
+		;;
+		#################################################################
+		*)
+			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | logs [clean] | backup [full] | cartography | update>"
+		;;
 	esac
 
 else
