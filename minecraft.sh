@@ -69,7 +69,10 @@ fi
 #	Then, use PS to find children of that screen whose
 #	command is 'java'.
 
-SCREEN_PID=$(screen -ls | grep $SCREEN_NAME | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
+SCREEN_PID=$(screen -ls | grep $SCREEN_NAME | head -n1 | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
+
+echo $SCREEN_PID
+
 if [ -z $SCREEN_PID ]; then
 	#	Our server seems offline, because there's no screen running.
 	#	Set MC_PID to a null value.
