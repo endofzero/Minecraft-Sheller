@@ -58,6 +58,25 @@ else
 	fi
 fi
 
+#	Get the PID of our Java process for later use.  Better
+#	than just killing the lowest PID java process like the
+#	original verison did, but still non-optimal.
+#
+#	Explanation: 
+#
+#	Find the PID of our screen that's running Minecraft.
+#	Then, use PS to find children of that screen whose
+#	command is 'java'.
+
+SCREEN_PID=$(screen -ls | grep $SCREEN_NAME | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
+if [ -z $SCREEN_PID ]; then
+	#	Our server seems offline, because there's no screen running.
+	#	Set MC_PID to a null value.
+	MC_PID=''
+else
+	MC_PID=$(ps --ppid $SCREEN_PID -F -C java | tail -1 | awk '{print $2}')
+fi
+
 display() {
 	screen -x $SCREEN_NAME
 }
@@ -98,12 +117,16 @@ if [ $# -gt 0 ]; then
 				case $2 in
 					"force")
 						#	TODO:
-						#	This needs badly to be rewritten to not
-						#	kill all Java processes running on the
-						#	server.  This is very bad form.  Possibly
-						#	look at screen -ls to pick out the pid, 
-						#	and grep _that_ tree for Java?
-						kill `ps -e | grep java | cut -d " " -f 1`
+						#	Still needs work, but at least we try
+						#	to use the PID we grabbed earlier.
+						#	The fallback is still to blindly
+						#	kill the lowest-PID Java process running
+						#	on the 	server.  This is very bad form.
+						if [ -z $MC_PID ]; then
+							kill `ps -e | grep java | cut -d " " -f 1`
+						else
+							kill $MC_PID
+						fi
 						rm -fr $MC_PATH/*.log.lck 2> /dev/null/;;
 				esac
 			else
@@ -123,12 +146,16 @@ if [ $# -gt 0 ]; then
 					"force")
 						echo "Forcing server to stop if it's lying.."
 						#	TODO:
-						#	This needs badly to be rewritten to not
-						#	kill all Java processes running on the
-						#	server.  This is very bad form.  Possibly
-						#	look at screen -ls to pick out the pid, 
-						#	and grep _that_ tree for Java?
-						kill `ps -e | grep java | cut -d " " -f 1`
+						#	Still needs work, but at least we try
+						#	to use the PID we grabbed earlier.
+						#	The fallback is still to blindly
+						#	kill the lowest-PID Java process running
+						#	on the 	server.  This is very bad form.
+						if [ -z $MC_PID ]; then
+							kill `ps -e | grep java | cut -d " " -f 1`
+						else
+							kill $MC_PID
+						fi
 						rm -fr $MC_PATH/*.log.lck 2> /dev/null/
 					;;
 				esac
