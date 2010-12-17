@@ -42,15 +42,15 @@ MCOVERVIEWER_OPTIONS="--lighting"
 
 # 	End of configuration
 
-if [ 1 -eq $SERVERMOD  ]; then
+if [[ 1 -eq $SERVERMOD  ]]; then
 	locks=$(ls $MC_PATH/logs/*.log.lck 2> /dev/null | wc -l)
-	if [ "0" != "$locks" ]; then
+	if [[ "0" != "$locks" ]]; then
 		ONLINE=1
 	else
 		ONLINE=0
 	fi
 else
-	if [ -e $MC_PATH/server.log.lck ]; then
+	if [[ -e $MC_PATH/server.log.lck ]]; then
 		#       ps -e | grep java | wc -l
 		ONLINE=1
 	else
@@ -70,7 +70,7 @@ fi
 
 SCREEN_PID=$(screen -ls | grep $SCREEN_NAME | head -n1 | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
 
-if [ -z $SCREEN_PID ]; then
+if [[ -z $SCREEN_PID ]]; then
 	#	Our server seems offline, because there's no screen running.
 	#	Set MC_PID to a null value.
 	MC_PID=''
@@ -84,7 +84,7 @@ display() {
 
 server_launch() {
 	echo "Launching minecraft server..."
-	if [ 1 -eq $SERVERMOD ]; then
+	if [[ 1 -eq $SERVERMOD ]]; then
 		echo "Minecraft_Mod.jar"
 		cd $MC_PATH
 		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar Minecraft_Mod.jar nogui
@@ -103,11 +103,11 @@ server_stop() {
 	sleep 5
 }
 
-if [ $# -gt 0 ]; then
+if [[ $# -gt 0 ]]; then
 	case "$1" in
 		#################################################################
 		"status")
-			if [ 1 -eq $ONLINE ]; then
+			if [[ 1 -eq $ONLINE ]]; then
 				echo "Minecraft server seems ONLINE."
 			else 
 				echo "Minecraft server seems OFFLINE."
@@ -115,7 +115,7 @@ if [ $# -gt 0 ]; then
 		;;
 		#################################################################
 		"start")
-			if [ 1 -eq $ONLINE ]; then
+			if [[ 1 -eq $ONLINE ]]; then
 				echo "Server seems to be already running !"
 				case $2 in
 					"force")
@@ -125,7 +125,7 @@ if [ $# -gt 0 ]; then
 						#	The fallback is still to blindly
 						#	kill the lowest-PID Java process running
 						#	on the 	server.  This is very bad form.
-						if [ -z $MC_PID ]; then
+						if [[ -z $MC_PID ]]; then
 							kill `ps -e | grep java | cut -d " " -f 1`
 						else
 							kill $MC_PID
@@ -134,14 +134,14 @@ if [ $# -gt 0 ]; then
 				esac
 			else
 				server_launch
-				if [ 1 -eq $DISPLAY_ON_LAUNCH ]; then
+				if [[ 1 -eq $DISPLAY_ON_LAUNCH ]]; then
 					display
 				fi	
 			fi
 		;;
 		#################################################################
 		"stop")
-			if [ 1 -eq $ONLINE ]; then
+			if [[ 1 -eq $ONLINE ]]; then
 				server_stop
 			else
 				echo "Server seems to be offline..."
@@ -154,7 +154,7 @@ if [ $# -gt 0 ]; then
 						#	The fallback is still to blindly
 						#	kill the lowest-PID Java process running
 						#	on the 	server.  This is very bad form.
-						if [ -z $MC_PID ]; then
+						if [[ -z $MC_PID ]]; then
 							kill `ps -e | grep java | cut -d " " -f 1`
 						else
 							kill $MC_PID
@@ -166,7 +166,7 @@ if [ $# -gt 0 ]; then
 		;;
 		#################################################################
 		"restart")
-			if [ 1 -eq $ONLINE ]; then
+			if [[ 1 -eq $ONLINE ]]; then
 				case $2 in
 					"warn")
 						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Server will restart in 30s !\r"`"
@@ -178,13 +178,13 @@ if [ $# -gt 0 ]; then
 				server_stop
 			fi
 			server_launch
-			if [ 1 -eq $DISPLAY_ON_LAUNCH ]; then
+			if [[ 1 -eq $DISPLAY_ON_LAUNCH ]]; then
 				display
 			fi
 		;;
 		#################################################################
 		"say")
-			if [ 1 -eq $ONLINE ]; then
+			if [[ 1 -eq $ONLINE ]]; then
 				screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say $2\r"`"
 				sleep 1
 			else
@@ -199,7 +199,7 @@ if [ $# -gt 0 ]; then
 			case $2 in
 				"clean")
 					DATE=$(date +%d-%m --date "$LOGS_DAYS day ago")
-					if [ -e logs-$DATE ]; then
+					if [[ -e logs-$DATE ]]; then
 						mkdir -p $BKUP_PATH/logs
 						mv logs-$DATE $BKUP_PATH/logs/
 					fi
@@ -208,7 +208,7 @@ if [ $# -gt 0 ]; then
 
 			DATE=$(date +%d-%m)
 			LOG_NEWDIR=logs-$DATE
-			if [ -e $LOG_TDIR/$LOG_NEWDIR ]; then
+			if [[ -e $LOG_TDIR/$LOG_NEWDIR ]]; then
 				rm $LOG_TDIR/$LOG_NEWDIR/*
 			else
 				mkdir $LOG_TDIR/$LOG_NEWDIR
@@ -217,8 +217,8 @@ if [ $# -gt 0 ]; then
 			DATE=$(date +%d-%m-%Hh%M)
 			LOG_TFILE=logs-$DATE.log
 
-			if [ 1 -eq $SERVERMOD ]; then
-				if [ 1 -eq $ONLINE ]; then
+			if [[ 1 -eq $SERVERMOD ]]; then
+				if [[ 1 -eq $ONLINE ]]; then
 					LOG_LCK=$(basename $MC_PATH/logs/*.log.lck .log.lck)
 					echo "Found a log lock : $LOG_LCK"
 				else
@@ -227,9 +227,9 @@ if [ $# -gt 0 ]; then
 
 				cd $MC_PATH/logs/
 				for i in *; do
-					if [ $i != $LOG_LCK.log.lck ]; then # skip du fichier lck
+					if [[ $i != $LOG_LCK.log.lck ]]; then # skip du fichier lck
 						cat $i >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
-						if [ $i != $LOG_LCK.log ]; then	# On ne supprime pas le fichier log courant, si le serv est en route
+						if [[ $i != $LOG_LCK.log ]]; then	# On ne supprime pas le fichier log courant, si le serv est en route
 							rm $i
 						fi
 					fi
@@ -239,27 +239,27 @@ if [ $# -gt 0 ]; then
 					cat server.log >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
 				fi
 
-			if [ -e $LOG_TDIR/ip-list.log ]; then
+			if [[ -e $LOG_TDIR/ip-list.log ]]; then
 				cat $LOG_TDIR/ip-list.log | sort | uniq > $LOG_TDIR/templist.log
 			fi
 
-			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+.+logged in'  | sed -e 's/.*\[INFO\]\s//g' -e 's/\[\//\t/g' -e 's/:.*//g' >> $LOG_TDIR/templist.log
+			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep '[[0-9]]+\.[[0-9]]+\.[[0-9]]+\.[[0-9]]+.+logged in'  | sed -e 's/.*\[[INFO\]]\s//g' -e 's/\[[\//\t/g' -e 's/:.*//g' >> $LOG_TDIR/templist.log
 			cat $LOG_TDIR/templist.log | sort | uniq -w 4 > $LOG_TDIR/ip-list.log
 			rm $LOG_TDIR/templist.log
 
-			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep 'logged in|lost connection' | sed -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).\[INFO\].\([a-zA-Z0-9_]\{1,\}\).\{1,\}logged in/\1\t\2 : connected/g' -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).\[INFO\].\([a-zA-Z0-9_]\{1,\}\).lost connection.*/\1\t\2 : disconnected/g' >> $LOG_TDIR/$LOG_NEWDIR/connexions-$DATE.log
+			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep 'logged in|lost connection' | sed -e 's/.*\([[0-9]]\{2\}:[[0-9]]\{2\}:[[0-9]]\{2\}\).\[[INFO\]].\([[a-zA-Z0-9_]]\{1,\}\).\{1,\}logged in/\1\t\2 : connected/g' -e 's/.*\([[0-9]]\{2\}:[[0-9]]\{2\}:[[0-9]]\{2\}\).\[[INFO\]].\([[a-zA-Z0-9_]]\{1,\}\).lost connection.*/\1\t\2 : disconnected/g' >> $LOG_TDIR/$LOG_NEWDIR/connexions-$DATE.log
 
-			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep '<[a-zA-Z0-9_]+>|\[CONSOLE\]' | sed -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).\[INFO\]./\1 /g' >> $LOG_TDIR/$LOG_NEWDIR/chat-$DATE.log
+			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep '<[[a-zA-Z0-9_]]+>|\[[CONSOLE\]]' | sed -e 's/.*\([[0-9]]\{2\}:[[0-9]]\{2\}:[[0-9]]\{2\}\).\[[INFO\]]./\1 /g' >> $LOG_TDIR/$LOG_NEWDIR/chat-$DATE.log
 
-			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep 'Internal exception|error' | sed -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).\[INFO\]./\1\t/g' >> $LOG_TDIR/$LOG_NEWDIR/errors-$DATE.log
+			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep 'Internal exception|error' | sed -e 's/.*\([[0-9]]\{2\}:[[0-9]]\{2\}:[[0-9]]\{2\}\).\[[INFO\]]./\1\t/g' >> $LOG_TDIR/$LOG_NEWDIR/errors-$DATE.log
 		;;
 		#################################################################
 		"backup")
 			mkdir -p $BKUP_PATH
 			cd $BKUP_PATH
 
-			if [ -e $MC_PATH/$WORLD_NAME ]; then
-				if [ $ONLINE -eq 1 ]; then 
+			if [[ -e $MC_PATH/$WORLD_NAME ]]; then
+				if [[ $ONLINE -eq 1 ]]; then 
 					echo "Server running, warning players : backup in 10s."
 					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Backing up the map in 10s\r"`"
 					sleep 10
@@ -278,7 +278,7 @@ if [ $# -gt 0 ]; then
 				FILENAME=$WORLD_NAME-$DATE
 				BACKUP_FILES=$BKUP_PATH/list.$DATE
 
-				if [ "full" == $2 ]; then
+				if [[ "full" == $2 ]]; then
 					# If full flag set, Make full backup, and remove old incrementals
 					FILENAME=$FILENAME-full.tgz
 
@@ -312,7 +312,7 @@ if [ $# -gt 0 ]; then
 
 				rm -f $BACKUP_FILES
 
-				if [ 1 -eq $ONLINE ]; then
+				if [[ 1 -eq $ONLINE ]]; then
 					echo "Issuing save-on command..."
 					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
 					sleep 1
@@ -325,9 +325,9 @@ if [ $# -gt 0 ]; then
 		;;
 		#################################################################
 		"cartography")
-			if [ -e $CARTO_PATH ]; then
-				if [ -e $MC_PATH/$WORLD_NAME ]; then
-					if [ 1 -eq $ONLINE ]; then
+			if [[ -e $CARTO_PATH ]]; then
+				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
+					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-all command, wait 5s...";
 						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
 						sleep 5
@@ -348,7 +348,7 @@ if [ $# -gt 0 ]; then
 					cd $MC_PATH
 					echo "Cartography is done."
 
-					if [ 1 -eq $ONLINE ]; then
+					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-on command..."
 						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
 						sleep 1
@@ -364,9 +364,9 @@ if [ $# -gt 0 ]; then
 		;;
 		#################################################################
 		"biome")
-			if [ -e $BIOME_PATH ]; then
-				if [ -e $MC_PATH/$WORLD_NAME ]; then
-					if [ 1 -eq $ONLINE ]; then
+			if [[ -e $BIOME_PATH ]]; then
+				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
+					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-all command, wait 5s...";
 						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
 						sleep 5
@@ -380,7 +380,7 @@ if [ $# -gt 0 ]; then
 					java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui $MC_PATH/$WORLD_NAME/
 					echo "Biome extraction is complete."
 
-					if [ 1 -eq $ONLINE ]; then
+					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-on command..."
 						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
 						sleep 1
@@ -396,9 +396,9 @@ if [ $# -gt 0 ]; then
 		;;
 		#################################################################
 		"overviewer")
-			if [ -e $MCOVERVIEWER_PATH ];  then
-				if [ -e $MC_PATH/$WORLD_NAME ]; then
-					if [ 1 -eq $ONLINE ]; then
+			if [[ -e $MCOVERVIEWER_PATH ]];  then
+				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
+					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-all command, wait 5s..."
 						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
 						sleep 5
@@ -416,7 +416,7 @@ if [ $# -gt 0 ]; then
 					python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$WORLD_NAME $MCOVERVIEWER_MAPS_PATH
 					echo "Minecraft-Overviewer is done."
 
-					if [ 1 -eq $ONLINE ]; then
+					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-on command..."
 						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
 						sleep 1
@@ -432,7 +432,7 @@ if [ $# -gt 0 ]; then
 		;;
 		#################################################################
 		"update")
-			if [ 1 -eq $ONLINE ]; then
+			if [[ 1 -eq $ONLINE ]]; then
 				server_stop
 			fi
 
@@ -441,7 +441,7 @@ if [ $# -gt 0 ]; then
 			echo "Backing up current binaries..."
 			DATE=$(date +%d-%m-%Y)			
 			cd $MC_PATH
-			if [ 1 -eq $SERVERMOD ]; then
+			if [[ 1 -eq $SERVERMOD ]]; then
 				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar Minecraft_Mod.jar
 				rm Minecraft_Mod.jar
 			else
@@ -451,7 +451,7 @@ if [ $# -gt 0 ]; then
 
 			echo "Downloading new binaries..."
 			wget -N http://www.minecraft.net/download/minecraft_server.jar
-			if [ 1 -eq $SERVERMOD ]; then
+			if [[ 1 -eq $SERVERMOD ]]; then
 				echo "Downloading hey0's serverMod..."
 				mkdir -p ModTmp
 				cd ModTmp/
@@ -462,7 +462,7 @@ if [ $# -gt 0 ]; then
 				cd $MC_PATH
 				rm -rf ModTmp    
 			fi
-			if [ 1 -eq $RUNECRAFT ];  then
+			if [[ 1 -eq $RUNECRAFT ]];  then
 				echo "Downloading Runecraft..."
 				mkdir -p ModTmp
 				cd ModTmp/
@@ -474,7 +474,7 @@ if [ $# -gt 0 ]; then
 			fi
 
 			server_launch
-			if [ 1 -eq $DISPLAY_ON_LAUNCH ]; then
+			if [[ 1 -eq $DISPLAY_ON_LAUNCH ]]; then
 				display
 			fi
 		;;
@@ -485,7 +485,7 @@ if [ $# -gt 0 ]; then
 	esac
 
 else
-	if [ 1 -eq $ONLINE ]; then
+	if [[ 1 -eq $ONLINE ]]; then
 		display
 	else
 		echo "Minecraft server seems to be offline..."
