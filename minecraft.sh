@@ -199,16 +199,16 @@ if [[ $# -gt 0 ]]; then
 
 			case $2 in
 				"clean")
-					DATE=$(date +%d-%m --date "$LOGS_DAYS day ago")
-					if [[ -e logs-$DATE ]]; then
+					DATE=$(date +%Y-%d-%m --date "$LOGS_DAYS day ago")
+					if [[ -e $DATE-logs ]]; then
 						mkdir -p $BKUP_PATH/logs
 						mv logs-$DATE $BKUP_PATH/logs/
 					fi
 				;;
 			esac
 
-			DATE=$(date +%d-%m)
-			LOG_NEWDIR=logs-$DATE
+			DATE=$(date +%Y-%m-%d)
+			LOG_NEWDIR=$DATE-logs
 			if [[ -e $LOG_TDIR/$LOG_NEWDIR ]]; then
 				rm $LOG_TDIR/$LOG_NEWDIR/*
 			else
