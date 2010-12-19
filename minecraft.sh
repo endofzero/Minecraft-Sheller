@@ -199,11 +199,9 @@ if [[ $# -gt 0 ]]; then
 
 			case $2 in
 				"clean")
-					DATE=$(date +%Y-%d-%m --date "$LOGS_DAYS day ago")
-					if [[ -e $DATE-logs ]]; then
-						mkdir -p $BKUP_PATH/logs
-						mv logs-$DATE $BKUP_PATH/logs/
-					fi
+					#Move all old log folders into the backup directory based on $LOGS_DAYS
+					mkdir -p $BKUP_PATH/logs
+					find $LOG_TDIR -type d -mtime +$LOGS_DAYS -print | xargs -I xxx mv xxx $BKUP_PATH/logs/
 				;;
 			esac
 
