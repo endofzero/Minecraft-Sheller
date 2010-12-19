@@ -243,15 +243,15 @@ if [[ $# -gt 0 ]]; then
 				cat $LOG_TDIR/ip-list.log | sort | uniq > $LOG_TDIR/templist.log
 			fi
 
-			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep '[[0-9]]+\.[[0-9]]+\.[[0-9]]+\.[[0-9]]+.+logged in'  | sed -e 's/.*\[[INFO\]]\s//g' -e 's/\[\//\t/g' -e 's/:.*//g' >> $LOG_TDIR/templist.log
+			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+.+logged in'  | sed -e 's/.*\[INFO\]\s//g' -e 's/\[\//\t/g' -e 's/:.*//g' >> $LOG_TDIR/templist.log
 			cat $LOG_TDIR/templist.log | sort | uniq -w 4 > $LOG_TDIR/ip-list.log
 			rm $LOG_TDIR/templist.log
 
-			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep 'logged in|lost connection' | sed -e 's/.*\([[0-9]]\{2\}:[[0-9]]\{2\}:[[0-9]]\{2\}\).\[[INFO\]].\([[a-zA-Z0-9_]]\{1,\}\).\{1,\}logged in/\1\t\2 : connected/g' -e 's/.*\([[0-9]]\{2\}:[[0-9]]\{2\}:[[0-9]]\{2\}\).\[[INFO\]].\([[a-zA-Z0-9_]]\{1,\}\).lost connection.*/\1\t\2 : disconnected/g' >> $LOG_TDIR/$LOG_NEWDIR/connexions-$DATE.log
+			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep 'logged in|lost connection' | sed -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).\[INFO\].\([a-zA-Z0-9_]\{1,\}\).\{1,\}logged in/\1\t\2 : connected/g' -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).\[INFO\].\([a-zA-Z0-9_]\{1,\}\).lost connection.*/\1\t\2 : disconnected/g' >> $LOG_TDIR/$LOG_NEWDIR/connexions-$DATE.log
 
-			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep '<[[a-zA-Z0-9_]]+>|\[[CONSOLE\]]' | sed -e 's/.*\([[0-9]]\{2\}:[[0-9]]\{2\}:[[0-9]]\{2\}\).\[[INFO\]]./\1 /g' >> $LOG_TDIR/$LOG_NEWDIR/chat-$DATE.log
+			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep '<[a-zA-Z0-9_]+>|\[CONSOLE\]' | sed -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).\[INFO\]./\1 /g' >> $LOG_TDIR/$LOG_NEWDIR/chat-$DATE.log
 
-			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep 'Internal exception|error' | sed -e 's/.*\([[0-9]]\{2\}:[[0-9]]\{2\}:[[0-9]]\{2\}\).\[[INFO\]]./\1\t/g' >> $LOG_TDIR/$LOG_NEWDIR/errors-$DATE.log
+			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep 'Internal exception|error' | sed -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[[0-9]]\{2\}\).\[INFO\]./\1\t/g' >> $LOG_TDIR/$LOG_NEWDIR/errors-$DATE.log
 		;;
 		#################################################################
 		"backup")
