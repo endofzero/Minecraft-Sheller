@@ -243,7 +243,7 @@ if [[ $# -gt 0 ]]; then
 				cat $LOG_TDIR/ip-list.log | sort | uniq > $LOG_TDIR/templist.log
 			fi
 
-			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep '[[0-9]]+\.[[0-9]]+\.[[0-9]]+\.[[0-9]]+.+logged in'  | sed -e 's/.*\[[INFO\]]\s//g' -e 's/\[[\//\t/g' -e 's/:.*//g' >> $LOG_TDIR/templist.log
+			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep '[[0-9]]+\.[[0-9]]+\.[[0-9]]+\.[[0-9]]+.+logged in'  | sed -e 's/.*\[[INFO\]]\s//g' -e 's/\[\//\t/g' -e 's/:.*//g' >> $LOG_TDIR/templist.log
 			cat $LOG_TDIR/templist.log | sort | uniq -w 4 > $LOG_TDIR/ip-list.log
 			rm $LOG_TDIR/templist.log
 
