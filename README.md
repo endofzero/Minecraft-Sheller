@@ -5,6 +5,7 @@ Requirements:
 - Screen v4.x
 - c10t (for cartography to work)
 - brownan's overviewer script (for overviewer to work)
+- Donkey Kong's Biome Extractor
 - unzip (for auto updating)
 
 Installation :
@@ -29,6 +30,12 @@ Or:
 - Download from brownan's repo:
 
 [http://github.com/brownan/Minecraft-Overviewer](http://github.com/brownan/Minecraft-Overviewer)
+
+### Biome Extractor
+
+- Download from Donkey Kong's post (was tested as of 0.6a):
+
+[http://www.minecraftforum.net/viewtopic.php?f=25&t=80902](http://www.minecraftforum.net/viewtopic.php?f=25&t=80902)
 
 ### minecraft.sh
 
@@ -140,6 +147,9 @@ This is the path to the world maps folder
     CARTO_OPTIONS="-q -s"
 This contains all of the options you want when running cartography.
 
+    BIOME_PATH=/home/minecraft/BiomeExtractor
+This is the path to MinecraftBiomeExtractor.jar 
+
     MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
 This is the path to Overviewer (gmap.py)
 
@@ -176,6 +186,8 @@ I strongly recommend the MAPS_PATH to be an internet public folder.
 ##### ./minecraft.sh overviewer
 Displays a message to the players if the server is online, stops the writing of chunks, initiates Brownan's Overviewer script.
 I strongly recommend the MCOVERVIER_MAPS_PATH to be an internet public folder as well.
+##### ./minecraft.sh biome
+Running the extractor will disable saving, make a copy of your world, run the calculations, move the data into your world folder, before deleting the copy that is made and saving is turned back on.
 ##### ./minecraft.sh update
 Stops the server if it is online, backs up the old binairies, downloads the last binaries from mincraft.net and restarts 
 the server.
