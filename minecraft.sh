@@ -13,7 +13,7 @@ SCREEN_NAME="minecraft"
 MEMMAX=1024
 MEMALOC=1024
 DISPLAY_ON_LAUNCH=0
-
+SERVER_OPTIONS="-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=2 -XX:+AggressiveOpts"
 # Modifications
 SERVERMOD=1
 RUNECRAFT=1
@@ -88,12 +88,12 @@ server_launch() {
 	if [[ 1 -eq $SERVERMOD ]]; then
 		echo "Minecraft_Mod.jar"
 		cd $MC_PATH
-		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar Minecraft_Mod.jar nogui
+		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar Minecraft_Mod.jar nogui
 		sleep 1
 	else
 		echo "minecraft_server.jar"
 		cd $MC_PATH
-		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true -jar minecraft_server.jar nogui
+		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar minecraft_server.jar nogui
 		sleep 1
 	fi		
 }
