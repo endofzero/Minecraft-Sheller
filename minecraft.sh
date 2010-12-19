@@ -487,7 +487,8 @@ if [[ $# -gt 0 ]]; then
 		;;
 		#################################################################
 		*)
-			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | logs [clean] | backup [full] | cartography | update>"
+			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | logs [clean] | 
+backup [full] | cartography | biome | update>"
 		;;
 	esac
 
