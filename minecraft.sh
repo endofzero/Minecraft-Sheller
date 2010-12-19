@@ -381,7 +381,10 @@ if [[ $# -gt 0 ]]; then
 
 					echo "Biome extraction in progress..."
 					java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui $MC_PATH/$WORLD_NAME/
-					echo "Biome extraction is complete."
+					echo "Biome extraction is complete, stalling for 30 seconds"
+					sleep 20
+					echo "Stalling for 10 more seconds..."
+					sleep 10
 
 					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-on command..."
