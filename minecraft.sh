@@ -377,8 +377,12 @@ if [[ $# -gt 0 ]]; then
 					fi
 
 					echo "Biome extraction in progress..."
-					java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui $MC_PATH/$WORLD_NAME/
-					echo "Biome extraction is complete."
+					mkdir -p BiomeTmp
+					cp -r $MC_PATH/$WORLD_NAME/ BiomeTmp/
+					java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui BiomeTmp/$WORLD_NAME/
+					cp -ru BiomeTmp/$WORLD_NAME/EXTRACTEDBIOMES/ $MC_PATH/$WORLD_NAME/EXTRACTEDBIOMES/
+					rm -rf BiomeTmp    
+					echo "Biome extraction is complete"
 
 					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-on command..."
