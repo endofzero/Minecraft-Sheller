@@ -3,8 +3,13 @@ Requirements:
 - Java runtime environment
 - Minecraft Server JAR
 - Screen v4.x
+
+Optional:
+==============
+
 - c10t (for cartography to work)
 - brownan's overviewer script (for overviewer to work)
+- Donkey Kong's Biome Extractor (for biomes)
 - unzip (for auto updating)
 
 Installation :
