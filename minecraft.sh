@@ -14,6 +14,7 @@ MEMMAX=1024
 MEMALOC=1024
 DISPLAY_ON_LAUNCH=0
 SERVER_OPTIONS="-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=2 -XX:+AggressiveOpts"
+
 # Modifications
 SERVERMOD=1
 RUNECRAFT=1
@@ -482,8 +483,7 @@ if [[ $# -gt 0 ]]; then
 		;;
 		#################################################################
 		*)
-			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | logs [clean] | 
-backup [full] | cartography | biome | update>"
+			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | logs [clean] | backup [full] | cartography | biome | update>"
 		;;
 	esac
 
