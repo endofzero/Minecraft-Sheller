@@ -1,7 +1,7 @@
 #!/bin/bash
 # original author : Relliktsohg
-# Huge thanks to Maine for his incremental backup
-# THanks to endofzero for his improved update routine
+# continued contributions: Maine, endofzero
+# dopeghoti
 
 #	Configuration
 
