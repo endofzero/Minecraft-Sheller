@@ -13,7 +13,7 @@ SCREEN_NAME="minecraft"
 MEMMAX=1536
 MEMALOC=1024
 DISPLAY_ON_LAUNCH=0
-SERVER_OPTIONS="-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=2 -XX:+AggressiveOpts"
+SERVER_OPTIONS=""
 
 # Modifications
 SERVERMOD=0
