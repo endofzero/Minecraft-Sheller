@@ -10,14 +10,14 @@
 WORLD_NAME="world"
 MC_PATH=/home/minecraft
 SCREEN_NAME="minecraft"
-MEMMAX=1024
+MEMMAX=1536
 MEMALOC=1024
 DISPLAY_ON_LAUNCH=0
 SERVER_OPTIONS="-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=2 -XX:+AggressiveOpts"
 
 # Modifications
-SERVERMOD=1
-RUNECRAFT=1
+SERVERMOD=0
+RUNECRAFT=0
 
 # Backups
 BKUP_PATH=$MC_PATH/backup
@@ -250,7 +250,7 @@ if [[ $# -gt 0 ]]; then
 
 			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep '<[a-zA-Z0-9_]+>|\[CONSOLE\]' | sed -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).\[INFO\]./\1 /g' >> $LOG_TDIR/$LOG_NEWDIR/chat-$DATE.log
 
-			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep 'Internal exception|error' | sed -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[[0-9]]\{2\}\).\[INFO\]./\1\t/g' >> $LOG_TDIR/$LOG_NEWDIR/errors-$DATE.log
+			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep 'Internal exception|error' | sed -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).\[INFO\]./\1\t/g' >> $LOG_TDIR/$LOG_NEWDIR/errors-$DATE.log
 		;;
 		#################################################################
 		"backup")
