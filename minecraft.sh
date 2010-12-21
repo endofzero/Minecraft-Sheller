@@ -100,7 +100,7 @@ server_launch() {
 	
 server_stop() {
 	echo "Stopping minecraft server..."
-	screen -S $SCREEN_NAME -p 0 -X stuff "`printf "stop.\r"`"
+	screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "stop.\r")"
 	sleep 5
 }
 
@@ -127,7 +127,7 @@ if [[ $# -gt 0 ]]; then
 						#	kill the lowest-PID Java process running
 						#	on the 	server.  This is very bad form.
 						if [[ -z $MC_PID ]]; then
-							kill `ps -e | grep java | cut -d " " -f 1`
+							kill $(ps -e | grep java | cut -d " " -f 1)
 						else
 							kill $MC_PID
 						fi
@@ -156,7 +156,7 @@ if [[ $# -gt 0 ]]; then
 						#	kill the lowest-PID Java process running
 						#	on the 	server.  This is very bad form.
 						if [[ -z $MC_PID ]]; then
-							kill `ps -e | grep java | cut -d " " -f 1`
+							kill $(ps -e | grep java | cut -d " " -f 1)
 						else
 							kill $MC_PID
 						fi
@@ -170,9 +170,9 @@ if [[ $# -gt 0 ]]; then
 			if [[ 1 -eq $ONLINE ]]; then
 				case $2 in
 					"warn")
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Server will restart in 30s !\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Server will restart in 30s !\r")"
 						sleep 20
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Server will restart in 10s !\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Server will restart in 10s !\r")"
 						sleep 10
 					;;
 				esac
@@ -186,7 +186,7 @@ if [[ $# -gt 0 ]]; then
 		#################################################################
 		"say")
 			if [[ 1 -eq $ONLINE ]]; then
-				screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say $2\r"`"
+				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say $2\r")"
 				sleep 1
 			else
 				echo "Server seems to be offline..."
@@ -260,14 +260,14 @@ if [[ $# -gt 0 ]]; then
 			if [[ -e $MC_PATH/$WORLD_NAME ]]; then
 				if [[ $ONLINE -eq 1 ]]; then 
 					echo "Server running, warning players : backup in 10s."
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Backing up the map in 10s\r"`"
+					screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Backing up the map in 10s\r")"
 					sleep 10
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Now backing up the map...\r"`"
+					screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Now backing up the map...\r")"
 					echo "Issuing save-all command, wait 5s..."
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
+					screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
 					sleep 5
 					echo "Issuing save-off command..."
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"
+					screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
 					sleep 1
 				fi
 
@@ -285,8 +285,7 @@ if [[ $# -gt 0 ]]; then
 					# Remove full archives older than $BKUP_DAYS_FULL
 					find ./$WORLD_NAME-*-incr.tgz -type f -mtime +$BKUP_DAYS_INCR -print > purgelist
 					find ./$WORLD_NAME-*-full.tgz -type f -mtime +$BKUP_DAYS_FULL -print >> purgelist
-					rm -f `cat purgelist`
-					rm -f purgelist
+					rm -f $(cat purgelist) purgelist
 
 					# Now make our full backup
 					pushd $MC_PATH
@@ -313,9 +312,9 @@ if [[ $# -gt 0 ]]; then
 
 				if [[ 1 -eq $ONLINE ]]; then
 					echo "Issuing save-on command..."
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
+					screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
 					sleep 1
-					screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Backup is done, have fun !\r"`"
+					screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Backup is done, have fun !\r")"
 				fi
 				echo "Backup process is over."
 			else
@@ -328,12 +327,12 @@ if [[ $# -gt 0 ]]; then
 				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
 					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-all command, wait 5s...";
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
 						sleep 5
 						echo "Issuing save-off command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
 						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Map cartography has begun.\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Map cartography has begun.\r")"
 					fi
 
 					mkdir -p $MAPS_PATH
@@ -349,9 +348,9 @@ if [[ $# -gt 0 ]]; then
 
 					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-on command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
 						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Map cartography is done.\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Map cartography is done.\r")"
 					fi
 
 				else
@@ -367,12 +366,12 @@ if [[ $# -gt 0 ]]; then
 				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
 					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-all command, wait 5s...";
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
 						sleep 5
 						echo "Issuing save-off command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
 						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Biome Extraction has begun.\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Biome Extraction has begun.\r")"
 					fi
 
 					echo "Biome extraction in progress..."
@@ -385,9 +384,9 @@ if [[ $# -gt 0 ]]; then
 
 					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-on command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
 						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Biome extraction is complete.\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Biome extraction is complete.\r")"
 					fi
 
 				else
@@ -403,14 +402,14 @@ if [[ $# -gt 0 ]]; then
 				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
 					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-all command, wait 5s..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-all\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
 						sleep 5
 						echo "Issuing save-off command...";
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-off\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
 						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Minecraft-Overviewer has started.\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Minecraft-Overviewer has started.\r")"
 						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Saving IS OFF, this may take some time.\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Saving IS OFF, this may take some time.\r")"
 					fi
 
 					mkdir -p $MCOVERVIEWER_MAPS_PATH
@@ -421,9 +420,9 @@ if [[ $# -gt 0 ]]; then
 
 					if [[ 1 -eq $ONLINE ]]; then
 						echo "Issuing save-on command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "save-on\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
 						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "`printf "say Minecraft-Overviewer is done.\r"`"
+						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Minecraft-Overviewer is done.\r")"
 					fi
 
 				else
