@@ -445,7 +445,7 @@ if [[ $# -gt 0 ]]; then
 			mkdir -p $BKUP_PATH
 
 			echo "Backing up current binaries..."
-			DATE=$(date +%d-%m-%Y)			
+			DATE=$(date +%Y-%m-%d)			
 			cd $MC_PATH
 			if [[ 1 -eq $SERVERMOD ]]; then
 				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar Minecraft_Mod.jar
