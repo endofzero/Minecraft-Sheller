@@ -28,7 +28,7 @@ BACKUP_INCR_LINK=${BKUP_PATH}/${WORLD_NAME}_incr.tgz
 
 # Logs
 LOG_TDIR=/var/www/minecraft/logs
-LOGS_DAYS=7
+LOGS_DAYS=14
 
 # Mapping
 CARTO_PATH=$MC_PATH/carto
