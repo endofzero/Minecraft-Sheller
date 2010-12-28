@@ -194,10 +194,10 @@ if [[ $# -gt 0 ]]; then
 		;;
 		#################################################################
 		"sync")
-			if [[ -e $MC_PATH/lockfile ]]; then
+			if [[ -e $MC_PATH/synclock ]]; then
 				echo "Previous run hasn't completed or has failed"
 			else
-				touch $MC_PATH/lockfile
+				touch $MC_PATH/synclock
 
 				if [[ 1 -eq $ONLINE ]]; then
         	                	echo "Issuing save-all command, wait 5s...";
@@ -217,7 +217,6 @@ if [[ $# -gt 0 ]]; then
 				echo "WORLD  : $WORLD_SIZE KB"
 				echo "OFFLINE: $OFFLINE_SIZE KB"
                                 echo "Sync is complete"
-				rm $MC_PATH/lockfile
 
                                 if [[ 1 -eq $ONLINE ]]; then
                                         echo "Issuing save-on command..."
@@ -225,6 +224,7 @@ if [[ $# -gt 0 ]]; then
                                         sleep 1
                                         screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync is complete, saving is ON.\r")"
                                 fi
+				rm $MC_PATH/synclock
 			fi
 			
 		;;
@@ -359,25 +359,31 @@ if [[ $# -gt 0 ]]; then
 		;;
 		#################################################################
 		"cartography")
-			if [[ -e $CARTO_PATH ]]; then
-				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
-
-					mkdir -p $MAPS_PATH
-
-					DATE=$(date +%d-%m-%Y-%Hh%M)
-					FILENAME=$WORLD_NAME-map-$DATE
-					cd $CARTO_PATH
-					echo "Cartography in progress..."
-					./c10t -w $MC_PATH/$OFFLINE_NAME/ -o $FILENAME.png $CARTO_OPTIONS
-					mv *.png $MAPS_PATH
-					cd $MC_PATH
-					echo "Cartography is done."
-
-				else
-					echo "The world \"$WORLD_NAME\" does not exist."
-				fi
+			if [[ -e $MC_PATH/cartolock ]]; then
+				echo "Previous run hasn't completed or has failed"
 			else
-				echo "The path to cartographer seems to be wrong."
+				touch $MC_PATH/cartolock
+				if [[ -e $CARTO_PATH ]]; then
+					if [[ -e $MC_PATH/$WORLD_NAME ]]; then
+
+						mkdir -p $MAPS_PATH
+
+						DATE=$(date +%d-%m-%Y-%Hh%M)
+						FILENAME=$WORLD_NAME-map-$DATE
+						cd $CARTO_PATH
+						echo "Cartography in progress..."
+						./c10t -w $MC_PATH/$OFFLINE_NAME/ -o $FILENAME.png $CARTO_OPTIONS
+						mv *.png $MAPS_PATH
+						cd $MC_PATH
+						echo "Cartography is done."
+
+					else
+						echo "The world \"$WORLD_NAME\" does not exist."
+					fi
+				else
+					echo "The path to cartographer seems to be wrong."
+				fi
+				rm $MC_PATH/cartolock
 			fi
 		;;
 		#################################################################
@@ -399,20 +405,26 @@ if [[ $# -gt 0 ]]; then
 		;;
 		#################################################################
 		"overviewer")
-			if [[ -e $MCOVERVIEWER_PATH ]];  then
-				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
-
-					mkdir -p $MCOVERVIEWER_MAPS_PATH
-
-					echo "Minecraft-Overviewer in progress..."
-					python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$OFFLINE_NAME $MCOVERVIEWER_MAPS_PATH
-					echo "Minecraft-Overviewer is done."
-
-				else
-					echo "The world \"$WORLD_NAME\" does not exist.";
-				fi
+			if [[ -e $MC_PATH/overviewlock ]]; then
+				echo "Previous run hasn't completed or has failed"
 			else
-				echo "The path to Minecraft-Overviewer seems to be wrong."
+				touch $MC_PATH/overviewlock
+				if [[ -e $MCOVERVIEWER_PATH ]];  then
+					if [[ -e $MC_PATH/$WORLD_NAME ]]; then
+
+						mkdir -p $MCOVERVIEWER_MAPS_PATH
+	
+						echo "Minecraft-Overviewer in progress..."
+						python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$OFFLINE_NAME $MCOVERVIEWER_MAPS_PATH
+						echo "Minecraft-Overviewer is done."
+
+					else
+						echo "The world \"$WORLD_NAME\" does not exist.";
+					fi
+				else
+					echo "The path to Minecraft-Overviewer seems to be wrong."
+				fi
+				rm $MC_PATH/overviewlock
 			fi
 		;;
 		#################################################################
