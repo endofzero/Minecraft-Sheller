@@ -8,6 +8,7 @@
 # Main
 
 WORLD_NAME="world"
+OFFLINE_NAME=$WORLD_NAME-offline
 MC_PATH=/home/minecraft
 SCREEN_NAME="minecraft"
 MEMMAX=1536
@@ -15,7 +16,6 @@ MEMALOC=1024
 DISPLAY_ON_LAUNCH=0
 SERVER_OPTIONS="-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=2 -XX:+AggressiveOpts"
 # SERVER_OPTIONS=""
-OFFLINE_NAME=$WORLD_NAME-offline
 
 # Modifications
 SERVERMOD=1
@@ -197,10 +197,10 @@ if [[ $# -gt 0 ]]; then
 		;;
 		#################################################################
 		"sync")
-			if [[ -e lockfile ]]; then
+			if [[ -e $MC_PATH/lockfile ]]; then
 				echo "Previous run hasn't completed or has failed"
 			else
-				touch lockfile
+				touch $MC_PATH/lockfile
 
 				if [[ 1 -eq $ONLINE ]]; then
         	                	echo "Issuing save-all command, wait 5s...";
@@ -220,7 +220,7 @@ if [[ $# -gt 0 ]]; then
 				echo "WORLD  : $WORLD_SIZE KB"
 				echo "OFFLINE: $OFFLINE_SIZE KB"
                                 echo "Sync is complete"
-				rm lockfile
+				rm $MC_PATH/lockfile
 
                                 if [[ 1 -eq $ONLINE ]]; then
                                         echo "Issuing save-on command..."
