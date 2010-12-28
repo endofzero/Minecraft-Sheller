@@ -57,7 +57,7 @@ prefer to perform logs clean + server restart + sync + then all of my mappers at
 every day. 
 - The 'logs' command should always be used BEFORE a restart, as 
 the restart wipes the previous logs. I'm running hey0's servermod, which 
-allows to have a log history, but thats not the case for everyone.
+allows to have a log history, but that's not the case for everyone.
 - I also recommend setting an Internet public folder, for the maps 
 images to be displayed. People on my server love this feature, as they 
 know a new map is generated every day, and they can see the evolution of 
@@ -187,7 +187,7 @@ This contains all of the options you want when running Overviewer.
 ##### ./minecraft.sh
 Without arguments, the script will resume the server screen. 
 (If you want to close the screen without shutting down the server, use 
-CTRL+A then press D to detatch the screen)
+CTRL+A then press D to detach the screen)
 ##### ./minecraft.sh status
 Tells you if the servers seems to be running, or not.
 ##### ./minecraft.sh start [force]
@@ -195,7 +195,7 @@ Starts the server. If you know your server is not running, but the script believ
 ##### ./minecraft.sh stop [force]
 Self explainatory
 ##### ./minecraft.sh restart [warn]
-If the warn option is specified, it will display a warnning 30s & 10s before the restart happens.
+If the warn option is specified, it will display a warning 30s & 10s before the restart happens.
 ##### ./minecraft.sh logs [clean]
 Parses logs into several files, grouped into a folder named with the date of the logging.
 If the clean option is specified, it will move the older folders into the backup folder.
@@ -215,7 +215,7 @@ I strongly recommend the MCOVERVIER_MAPS_PATH to be an internet public folder as
 ##### ./minecraft.sh biome
 Running the extractor will update any biome information from new chunks.
 ##### ./minecraft.sh update
-Stops the server if it is online, backs up the old binairies, downloads the last binaries from mincraft.net and restarts 
+Stops the server if it is online, backs up the old binaries, downloads the last binaries from minecraft.net and restarts 
 the server.
 
 
