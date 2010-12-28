@@ -100,7 +100,7 @@ Open minecraft.sh with a text editor, and edit the following lines, at the begin
     WORLD_NAME="world"
 This is the path to the world folder
 
-    OFFLINE_NAME=$WORLD_MAME-offline
+    OFFLINE_NAME=$WORLD_NAME-offline
 This is the name to the offline world folder that sync and all mapper functions use to process the world. This is saved in the same directory as your world folder.
 
     SCREEN_NAME="minecraft"
