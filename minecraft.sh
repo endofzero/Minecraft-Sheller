@@ -17,7 +17,7 @@ SERVER_OPTIONS="-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPaci
 # SERVER_OPTIONS=""
 
 # Modifications
-SERVERMOD=0
+SERVERMOD=1
 RUNECRAFT=1
 
 # Backups
