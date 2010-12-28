@@ -194,10 +194,10 @@ if [[ $# -gt 0 ]]; then
 		;;
 		#################################################################
 		"sync")
-			if [[ -e lockfile ]]; then
+			if [[ -e $MC_PATH/lockfile ]]; then
 				echo "Previous run hasn't completed or has failed"
 			else
-				touch lockfile
+				touch $MC_PATH/lockfile
 
 				if [[ 1 -eq $ONLINE ]]; then
         	                	echo "Issuing save-all command, wait 5s...";
@@ -217,7 +217,7 @@ if [[ $# -gt 0 ]]; then
 				echo "WORLD  : $WORLD_SIZE KB"
 				echo "OFFLINE: $OFFLINE_SIZE KB"
                                 echo "Sync is complete"
-				rm lockfile
+				rm $MC_PATH/lockfile
 
                                 if [[ 1 -eq $ONLINE ]]; then
                                         echo "Issuing save-on command..."
