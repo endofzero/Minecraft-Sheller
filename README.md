@@ -213,7 +213,7 @@ I strongly recommend the MAPS_PATH to be an internet public folder.
 Displays a message to the players if the server is online, stops the writing of chunks, initiates Brownan's Overviewer script.
 I strongly recommend the MCOVERVIER_MAPS_PATH to be an internet public folder as well.
 ##### ./minecraft.sh biome
-Running the extractor will disable saving, make a copy of your world, run the calculations, move the data into your world folder, before deleting the copy that is made and saving is turned back on.
+Running the extractor will update any biome information from new chunks.
 ##### ./minecraft.sh update
 Stops the server if it is online, backs up the old binairies, downloads the last binaries from mincraft.net and restarts 
 the server.
