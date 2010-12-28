@@ -6,8 +6,8 @@
 #	Configuration
 
 # Main
-
 WORLD_NAME="world"
+OFFLINE_NAME=$WORLD_NAME-offline
 MC_PATH=/home/minecraft
 SCREEN_NAME="minecraft"
 MEMMAX=1536
@@ -193,6 +193,42 @@ if [[ $# -gt 0 ]]; then
 			fi
 		;;
 		#################################################################
+		"sync")
+			if [[ -e lockfile ]]; then
+				echo "Previous run hasn't completed or has failed"
+			else
+				touch lockfile
+
+				if [[ 1 -eq $ONLINE ]]; then
+        	                	echo "Issuing save-all command, wait 5s...";
+	                                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
+	                                sleep 5
+	                                echo "Issuing save-off command..."
+	                                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
+	                                sleep 1
+	                                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync in progress, saving is OFF.\r")"
+				fi
+
+                                echo "Sync in progress..."
+                                mkdir -p $MC_PATH/$OFFLINE_NAME/
+                                rsync -az $MC_PATH/$WORLD_NAME/ $MC_PATH/$OFFLINE_NAME/
+				WORLD_SIZE=$(du -s $MC_PATH/$WORLD_NAME/ | sed s/[[:space:]].*//g)
+                                OFFLINE_SIZE=$(du -s $MC_PATH/$OFFLINE_NAME/ | sed s/[[:space:]].*//g)
+				echo "WORLD  : $WORLD_SIZE KB"
+				echo "OFFLINE: $OFFLINE_SIZE KB"
+                                echo "Sync is complete"
+				rm lockfile
+
+                                if [[ 1 -eq $ONLINE ]]; then
+                                        echo "Issuing save-on command..."
+                                        screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
+                                        sleep 1
+                                        screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync is complete, saving is ON.\r")"
+                                fi
+			fi
+			
+		;;
+		#################################################################
 		"logs")
 			mkdir -p $LOG_TDIR		
 			cd $LOG_TDIR
@@ -325,15 +361,6 @@ if [[ $# -gt 0 ]]; then
 		"cartography")
 			if [[ -e $CARTO_PATH ]]; then
 				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
-					if [[ 1 -eq $ONLINE ]]; then
-						echo "Issuing save-all command, wait 5s...";
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
-						sleep 5
-						echo "Issuing save-off command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
-						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Map cartography has begun.\r")"
-					fi
 
 					mkdir -p $MAPS_PATH
 
@@ -341,53 +368,27 @@ if [[ $# -gt 0 ]]; then
 					FILENAME=$WORLD_NAME-map-$DATE
 					cd $CARTO_PATH
 					echo "Cartography in progress..."
-					./c10t -w $MC_PATH/$WORLD_NAME/ -o $FILENAME.png $CARTO_OPTIONS
+					./c10t -w $MC_PATH/$OFFLINE_NAME/ -o $FILENAME.png $CARTO_OPTIONS
 					mv *.png $MAPS_PATH
 					cd $MC_PATH
 					echo "Cartography is done."
-
-					if [[ 1 -eq $ONLINE ]]; then
-						echo "Issuing save-on command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
-						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Map cartography is done.\r")"
-					fi
 
 				else
 					echo "The world \"$WORLD_NAME\" does not exist."
 				fi
 			else
-				echo "The path to cartographier seems to be wrong."
+				echo "The path to cartographer seems to be wrong."
 			fi
 		;;
 		#################################################################
 		"biome")
 			if [[ -e $BIOME_PATH ]]; then
 				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
-					if [[ 1 -eq $ONLINE ]]; then
-						echo "Issuing save-all command, wait 5s...";
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
-						sleep 5
-						echo "Issuing save-off command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
-						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Biome Extraction has begun.\r")"
-					fi
 
 					echo "Biome extraction in progress..."
-					mkdir -p BiomeTmp
-					cp -r $MC_PATH/$WORLD_NAME/ BiomeTmp/
-					java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui BiomeTmp/$WORLD_NAME/
-					cp -ru BiomeTmp/$WORLD_NAME/EXTRACTEDBIOMES/ $MC_PATH/$WORLD_NAME/EXTRACTEDBIOMES/
-					rm -rf BiomeTmp    
+					java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui $MC_PATH/$OFFLINE_NAME/
+					cp -ru $MC_PATH/$OFFLINE_NAME/EXTRACTEDBIOMES/ $MC_PATH/$WORLD_NAME/EXTRACTEDBIOMES/
 					echo "Biome extraction is complete"
-
-					if [[ 1 -eq $ONLINE ]]; then
-						echo "Issuing save-on command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
-						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Biome extraction is complete.\r")"
-					fi
 
 				else
 					echo "The world \"$WORLD_NAME\" does not exist."
@@ -400,30 +401,12 @@ if [[ $# -gt 0 ]]; then
 		"overviewer")
 			if [[ -e $MCOVERVIEWER_PATH ]];  then
 				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
-					if [[ 1 -eq $ONLINE ]]; then
-						echo "Issuing save-all command, wait 5s..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
-						sleep 5
-						echo "Issuing save-off command...";
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
-						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Minecraft-Overviewer has started.\r")"
-						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Saving IS OFF, this may take some time.\r")"
-					fi
 
 					mkdir -p $MCOVERVIEWER_MAPS_PATH
 
 					echo "Minecraft-Overviewer in progress..."
-					python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$WORLD_NAME $MCOVERVIEWER_MAPS_PATH
+					python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$OFFLINE_NAME $MCOVERVIEWER_MAPS_PATH
 					echo "Minecraft-Overviewer is done."
-
-					if [[ 1 -eq $ONLINE ]]; then
-						echo "Issuing save-on command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
-						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Minecraft-Overviewer is done.\r")"
-					fi
 
 				else
 					echo "The world \"$WORLD_NAME\" does not exist.";
@@ -482,7 +465,7 @@ if [[ $# -gt 0 ]]; then
 		;;
 		#################################################################
 		*)
-			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | logs [clean] | backup [full] | cartography | biome | update>"
+			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | logs [clean] | backup [full] | sync | cartography | biome | overviewer | update>"
 		;;
 	esac
 
