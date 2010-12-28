@@ -367,12 +367,6 @@ if [[ $# -gt 0 ]]; then
 			if [[ -e $CARTO_PATH ]]; then
 				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
 					if [[ 1 -eq $ONLINE ]]; then
-						echo "Issuing save-all command, wait 5s...";
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
-						sleep 5
-						echo "Issuing save-off command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
-						sleep 1
 						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Map cartography has begun.\r")"
 					fi
 
@@ -382,15 +376,12 @@ if [[ $# -gt 0 ]]; then
 					FILENAME=$WORLD_NAME-map-$DATE
 					cd $CARTO_PATH
 					echo "Cartography in progress..."
-					./c10t -w $MC_PATH/$WORLD_NAME/ -o $FILENAME.png $CARTO_OPTIONS
+					./c10t -w $MC_PATH/$OFFLINE_NAME/ -o $FILENAME.png $CARTO_OPTIONS
 					mv *.png $MAPS_PATH
 					cd $MC_PATH
 					echo "Cartography is done."
 
 					if [[ 1 -eq $ONLINE ]]; then
-						echo "Issuing save-on command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
-						sleep 1
 						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Map cartography is done.\r")"
 					fi
 
@@ -398,37 +389,18 @@ if [[ $# -gt 0 ]]; then
 					echo "The world \"$WORLD_NAME\" does not exist."
 				fi
 			else
-				echo "The path to cartographier seems to be wrong."
+				echo "The path to cartographer seems to be wrong."
 			fi
 		;;
 		#################################################################
 		"biome")
 			if [[ -e $BIOME_PATH ]]; then
 				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
-					if [[ 1 -eq $ONLINE ]]; then
-						echo "Issuing save-all command, wait 5s...";
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
-						sleep 5
-						echo "Issuing save-off command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
-						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Biome Extraction has begun.\r")"
-					fi
 
 					echo "Biome extraction in progress..."
-					mkdir -p BiomeTmp
-					cp -r $MC_PATH/$WORLD_NAME/ BiomeTmp/
-					java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui BiomeTmp/$WORLD_NAME/
-					cp -ru BiomeTmp/$WORLD_NAME/EXTRACTEDBIOMES/ $MC_PATH/$WORLD_NAME/EXTRACTEDBIOMES/
-					rm -rf BiomeTmp    
+					java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui $MC_PATH/$OFFLINE_NAME/
+					cp -ru $MC_PATH/$OFFLINE_NAME/EXTRACTEDBIOMES/ $MC_PATH/$WORLD_NAME/EXTRACTEDBIOMES/
 					echo "Biome extraction is complete"
-
-					if [[ 1 -eq $ONLINE ]]; then
-						echo "Issuing save-on command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
-						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Biome extraction is complete.\r")"
-					fi
 
 				else
 					echo "The world \"$WORLD_NAME\" does not exist."
