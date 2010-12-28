@@ -220,7 +220,6 @@ if [[ $# -gt 0 ]]; then
 				echo "WORLD  : $WORLD_SIZE KB"
 				echo "OFFLINE: $OFFLINE_SIZE KB"
                                 echo "Sync is complete"
-				rm $MC_PATH/synclock
 
                                 if [[ 1 -eq $ONLINE ]]; then
                                         echo "Issuing save-on command..."
@@ -228,6 +227,7 @@ if [[ $# -gt 0 ]]; then
                                         sleep 1
                                         screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync is complete, saving is ON.\r")"
                                 fi
+				rm $MC_PATH/synclock
 			fi
 			
 		;;
