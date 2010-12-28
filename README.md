@@ -53,7 +53,7 @@ configuration phase has to be available to him.
 
 #### (optional)
 - I strongly recommend using crontab to automate some of the process. I 
-prefer to perform logs + cartography + server restart at 4AM 
+prefer to perform logs clean + server restart + sync + then all of my mappers at 4AM 
 every day. 
 - The 'logs' command should always be used BEFORE a restart, as 
 the restart wipes the previous logs. I'm running hey0's servermod, which 
@@ -74,6 +74,14 @@ editing /home/USER/.bashrc, and adding the line:
 Considerations:
 --------------
 
+#### Space
+
+This script uses rsync to update an offline folder with the latest world information. As maps become larger, time to completion when running mappers on them increases. Having saving turned off for 15-30 minutes while a new map is being generated isn't good for the users. Saving is now only turned off for the time it takes to sync the folders.
+
+Because of this, your world size is effectively doubled when using this script. Whenever you issue the 'minecraft.sh sync' command, you will be shown the size of the two directories in KB.
+
+#### Overviewer 
+
 If using [Brownan's Overviewer](http://github.com/brownan/Minecraft-Overviewer) to create Google-like maps of your worlds, 
 be sure you are using the --cachedir=/path/to/dir to change the location 
 of the png files as you will start to take up considerable space since it
@@ -92,6 +100,9 @@ Open minecraft.sh with a text editor, and edit the following lines, at the begin
     WORLD_NAME="world"
 This is the path to the world folder
 
+    OFFLINE_NAME=$WORLD_MAME-offline
+This is the name to the offline world folder that sync and all mapper functions use to process the world. This is saved in the same directory as your world folder.
+
     SCREEN_NAME="minecraft"
 This is the name of the screen the server will be run on
 
@@ -106,6 +117,11 @@ Do you want the screen to be displayed each time the server starts? 1 if yes, 0 
 
     MC_PATH=/home/minecraft
 This is the path to your minecraft folder
+
+    SERVER_OPTIONS=""
+This is where you would place any desired flags for running your server.
+##### EXAMPLE: 
+     SERVER_OPTIONS="-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=2 -XX:+AggressiveOpts"
 
 **Modifications**
 
@@ -163,6 +179,9 @@ This is the location where Overviewer will render
     MCOVERVIEWER_CACHE_PATH=/var/www/minecraft/maps/Overview/cache/
 This is the path for the cache directory for Overviewer
 
+    MCOVERVIEWER_OPTIONS="--lighting"
+This contains all of the options you want when running Overviewer.
+
 ### Detailed Command Usage
 
 ##### ./minecraft.sh
@@ -184,6 +203,9 @@ Again, this command should be issues before a server restart.
 ##### ./minecraft.sh backup [full]
 Displays a message to the players if the server is online, stops the writing of chunks, create a dated archive and backs up the 
 world folder. If the full option is specified, it will delete the older incremental and full archives based on the settings.
+##### ./minecraft.sh sync
+This updates the offline folder to have the most recent information from the online folder
+This needs to be ran before you update any maps via the commands.
 ##### ./minecraft.sh cartography
 Displays a message to the players if the server is online, stops the writing of chunks, initiates c10t's cartography script.
 I strongly recommend the MAPS_PATH to be an internet public folder.
