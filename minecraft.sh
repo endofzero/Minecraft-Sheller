@@ -366,9 +366,6 @@ if [[ $# -gt 0 ]]; then
 		"cartography")
 			if [[ -e $CARTO_PATH ]]; then
 				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
-					if [[ 1 -eq $ONLINE ]]; then
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Map cartography has begun.\r")"
-					fi
 
 					mkdir -p $MAPS_PATH
 
@@ -380,10 +377,6 @@ if [[ $# -gt 0 ]]; then
 					mv *.png $MAPS_PATH
 					cd $MC_PATH
 					echo "Cartography is done."
-
-					if [[ 1 -eq $ONLINE ]]; then
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Map cartography is done.\r")"
-					fi
 
 				else
 					echo "The world \"$WORLD_NAME\" does not exist."
@@ -413,30 +406,12 @@ if [[ $# -gt 0 ]]; then
 		"overviewer")
 			if [[ -e $MCOVERVIEWER_PATH ]];  then
 				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
-					if [[ 1 -eq $ONLINE ]]; then
-						echo "Issuing save-all command, wait 5s..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
-						sleep 5
-						echo "Issuing save-off command...";
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
-						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Minecraft-Overviewer has started.\r")"
-						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Saving IS OFF, this may take some time.\r")"
-					fi
 
 					mkdir -p $MCOVERVIEWER_MAPS_PATH
 
 					echo "Minecraft-Overviewer in progress..."
-					python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$WORLD_NAME $MCOVERVIEWER_MAPS_PATH
+					python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$OFFLINE_NAME $MCOVERVIEWER_MAPS_PATH
 					echo "Minecraft-Overviewer is done."
-
-					if [[ 1 -eq $ONLINE ]]; then
-						echo "Issuing save-on command..."
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
-						sleep 1
-						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Minecraft-Overviewer is done.\r")"
-					fi
 
 				else
 					echo "The world \"$WORLD_NAME\" does not exist.";
@@ -495,7 +470,7 @@ if [[ $# -gt 0 ]]; then
 		;;
 		#################################################################
 		*)
-			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | logs [clean] | backup [full] | cartography | biome | update>"
+			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | logs [clean] | backup [full] | sync | cartography | biome | overviewer | update>"
 		;;
 	esac
 
