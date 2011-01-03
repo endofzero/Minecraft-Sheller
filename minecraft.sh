@@ -107,6 +107,41 @@ server_stop() {
 	sleep 5
 }
 
+sync_offline() {
+        if [[ -e $MC_PATH/synclock ]]; then
+        	echo "Previous sync hasn't completed or has failed"
+        else
+                touch $MC_PATH/synclock
+
+                if [[ 1 -eq $ONLINE ]]; then
+                	echo "Issuing save-all command, wait 5s...";
+                        screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
+                        sleep 5
+                        echo "Issuing save-off command..."
+                        screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
+                        sleep 1
+                        screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync in progress, saving is OFF.\r")"
+                fi
+
+                        echo "Sync in progress..."
+                        mkdir -p $MC_PATH/$OFFLINE_NAME/
+                        rsync -az $MC_PATH/$WORLD_NAME/ $MC_PATH/$OFFLINE_NAME/
+                        WORLD_SIZE=$(du -s $MC_PATH/$WORLD_NAME/ | sed s/[[:space:]].*//g)
+                        OFFLINE_SIZE=$(du -s $MC_PATH/$OFFLINE_NAME/ | sed s/[[:space:]].*//g)
+                        echo "WORLD  : $WORLD_SIZE KB"
+                        echo "OFFLINE: $OFFLINE_SIZE KB"
+                        echo "Sync is complete"
+
+                        if [[ 1 -eq $ONLINE ]]; then
+                        	echo "Issuing save-on command..."
+                                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
+                                sleep 1
+                                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync is complete, saving is ON.\r")"
+                fi
+                        rm $MC_PATH/synclock
+        fi
+}
+
 if [[ $# -gt 0 ]]; then
 	case "$1" in
 		#################################################################
@@ -198,7 +233,7 @@ if [[ $# -gt 0 ]]; then
 		#################################################################
 		"sync")
 			if [[ -e $MC_PATH/synclock ]]; then
-				echo "Previous run hasn't completed or has failed"
+				echo "Previous sync hasn't completed or has failed"
 			else
 				touch $MC_PATH/synclock
 
@@ -365,7 +400,7 @@ if [[ $# -gt 0 ]]; then
 		#################################################################
 		"cartography")
 			if [[ -e $MC_PATH/cartolock ]]; then
-				echo "Previous run hasn't completed or has failed"
+				echo "Previous cartography run hasn't completed or has failed"
 			else
 				touch $MC_PATH/cartolock
 				if [[ -e $CARTO_PATH ]]; then
@@ -411,7 +446,7 @@ if [[ $# -gt 0 ]]; then
 		#################################################################
 		"overviewer")
 			if [[ -e $MC_PATH/overviewlock ]]; then
-				echo "Previous run hasn't completed or has failed"
+				echo "Previous overview run hasn't completed or has failed"
 			else
 				touch $MC_PATH/overviewlock
 				if [[ -e $MCOVERVIEWER_PATH ]];  then
@@ -468,7 +503,8 @@ if [[ $# -gt 0 ]]; then
 				echo "Downloading Runecraft..."
 				mkdir -p ModTmp
 				cd ModTmp/
-				wget http://llama.cerberusstudios.net/runecraft_latest.zip
+				wget 
+http://llama.cerberusstudios.net/runecraft/trunk/runecraft_latest.zip
 				unzip runecraft_latest.zip
 				jar uvf $MC_PATH/minecraft_server.jar *.class
 				cd $MC_PATH
