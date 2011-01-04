@@ -231,6 +231,15 @@ if [[ $# -gt 0 ]]; then
 			fi
 		;;
 		#################################################################
+		"tell")
+			if [[ 1 -eq $ONLINE ]]; then
+				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "tell $2 $3\r")"
+				sleep 1
+			else
+				echo "Server seems to be offline..."
+			fi
+		;;
+		#################################################################
 		"sync")
 			sync_offline			
 		;;
