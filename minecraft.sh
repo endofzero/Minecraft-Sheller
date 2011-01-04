@@ -408,7 +408,7 @@ if [[ $# -gt 0 ]]; then
 
 						mkdir -p $MAPS_PATH
 
-						DATE=$(date +%d-%m-%Y-%Hh%M)
+						DATE=$(date +%Y-%m-%d-%Hh%M)
 						FILENAME=$WORLD_NAME-map-$DATE
 						cd $CARTO_PATH
 						echo "Cartography in progress..."
