@@ -69,7 +69,7 @@ fi
 #	Then, use PS to find children of that screen whose
 #	command is 'java'.
 
-SCREEN_PID=$(screen -ls | grep $SCREEN_NAME | grep -v "No Sockets Found" | head -n1 | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
+SCREEN_PID=$(screen -ls | grep $SCREEN_NAME | grep -iv "No sockets found" | head -n1 | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
 
 if [[ -z $SCREEN_PID ]]; then
 	#	Our server seems offline, because there's no screen running.
