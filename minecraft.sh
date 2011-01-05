@@ -33,7 +33,7 @@ LOGS_DAYS=14
 # Mapping
 CARTO_PATH=$MC_PATH/carto
 MAPS_PATH=/var/www/minecraft/maps
-CARTO_OPTIONS="-q -s -m 4"
+CARTO_OPTIONS="-png -biomes -blendcave"
 BIOME_PATH=/home/minecraft/BiomeExtractor
 
 MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
@@ -390,7 +390,9 @@ if [[ $# -gt 0 ]]; then
 						FILENAME=$WORLD_NAME-map-$DATE
 						cd $CARTO_PATH
 						echo "Cartography in progress..."
-						./c10t -w $MC_PATH/$OFFLINE_NAME/ -o $FILENAME.png $CARTO_OPTIONS
+						./mcmap $CARTO_OPTIONS $MC_PATH/$WORLD_NAME/
+						mv output.png $FILENAME.png
+						mv thumb.png $FILENAME-thumb.png
 						mv *.png $MAPS_PATH
 						cd $MC_PATH
 						echo "Cartography is done."
