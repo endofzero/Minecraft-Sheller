@@ -501,7 +501,8 @@ http://llama.cerberusstudios.net/runecraft/trunk/runecraft_latest.zip
 		;;
 		#################################################################
 		*)
-			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | logs [clean] | backup [full] | sync | cartography | biome | overviewer | update>"
+			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | tell user 'message' | logs [clean] 
+			echo "backup [full] | sync | cartography [sync]| biome [sync] | overviewer [sync] | update>"
 		;;
 	esac
 
