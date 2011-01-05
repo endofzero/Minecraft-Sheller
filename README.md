@@ -198,13 +198,17 @@ world folder. If the full option is specified, it will delete the older incremen
 #####./minecraft.sh say "_message_"
 If the server is online, this will send the <message> to all users via the console.
 If the message is not surrounded by either single or double quotes, only the first word will be sent.
+
 Incorrect: ./minecraft.sh say This is a public message
+
 Correct: ./minecraft.sh say "This is a public message"
 
 ##### ./minecraft.sh tell _user_ "_message_"
 If the server is online, this will send a whisper of <message> to <user>.
 If the message is not surrounded by either single or double quotes, only the first word will be sent.
+
 Incorrect: ./minecraft.sh tell test_user This is a private message
+
 Correct: ./minecraft.sh tell test_user "This is a private message"
 
 ##### ./minecraft.sh sync
