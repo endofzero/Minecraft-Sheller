@@ -107,6 +107,12 @@ Do you want the screen to be displayed each time the server starts? 1 if yes, 0 
     MC_PATH=/home/minecraft
 This is the path to your minecraft folder
 
+    SERVER_OPTIONS=""
+This is where you would place any desired flags for running your server.
+
+EXAMPLE:
+    SERVER_OPTIONS="-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=2 -XX:+AggressiveOpts"
+
 **Modifications**
 
     SERVERMOD=0
@@ -181,9 +187,30 @@ If the warn option is specified, it will display a warnning 30s & 10s before the
 Parses logs into several files, grouped into a folder named with the date of the logging.
 If the clean option is specified, it will move the older folders into the backup folder.
 Again, this command should be issues before a server restart.
+
+Note: If you run this command with Hey0, you will see a message that states something like: "Found a log lock : server_##########"
+This is not an error and just a notification message. Logs are being generated correctly.
+
 ##### ./minecraft.sh backup [full]
 Displays a message to the players if the server is online, stops the writing of chunks, create a dated archive and backs up the 
 world folder. If the full option is specified, it will delete the older incremental and full archives based on the settings.
+
+#####./minecraft.sh say "<message>"
+If the server is online, this will send the <message> to all users via the console.
+If the message is not surrounded by either single or double quotes, only the first word will be sent.
+Incorrect: ./minecraft.sh say This is a public message
+Correct: ./minecraft.sh say "This is a public message"
+
+##### ./minecraft.sh tell <user> "<message>"
+If the server is online, this will send a whisper of <message> to <user>.
+If the message is not surrounded by either single or double quotes, only the first word will be sent.
+Incorrect: ./minecraft.sh tell test_user This is a private message
+Correct: ./minecraft.sh tell test_user "This is a private message"
+
+##### ./minecraft.sh sync
+This updates the offline folder to have the most recent information from the online folder This needs to be ran before you update any maps via 
+the commands. The size of both folders will be displayed.
+
 ##### ./minecraft.sh cartography
 Displays a message to the players if the server is online, stops the writing of chunks, initiates c10t's cartography script.
 I strongly recommend the MAPS_PATH to be an internet public folder.
