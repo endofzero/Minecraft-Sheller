@@ -29,6 +29,7 @@ BACKUP_INCR_LINK=${BKUP_PATH}/${WORLD_NAME}_incr.tgz
 # Logs
 LOG_TDIR=/var/www/minecraft/logs
 LOGS_DAYS=14
+LOG_MASTERFILE=master-log.log
 
 # Mapping
 CARTO_PATH=$MC_PATH/carto
@@ -277,6 +278,7 @@ if [[ $# -gt 0 ]]; then
 				for i in *; do
 					if [[ $i != $LOG_LCK.log.lck ]]; then # skip du fichier lck
 						cat $i >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
+						cat $i >> $LOG_TDIR/$LOG_MASTERFILE
 						if [[ $i != $LOG_LCK.log ]]; then	# On ne supprime pas le fichier log courant, si le serv est en route
 							rm $i
 						fi
@@ -285,6 +287,7 @@ if [[ $# -gt 0 ]]; then
 				else
 					cd $MC_PATH
 					cat server.log >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
+					cat server.log >> $LOG_TDIR/$LOG_MASTERFILE
 				fi
 
 			if [[ -e $LOG_TDIR/ip-list.log ]]; then
