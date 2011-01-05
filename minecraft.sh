@@ -113,6 +113,8 @@ sync_offline() {
         else
                 touch $MC_PATH/synclock
 
+                echo "Sync in progress..."
+
                 if [[ 1 -eq $ONLINE ]]; then
                 	echo "Issuing save-all command, wait 5s...";
                         screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
@@ -123,14 +125,12 @@ sync_offline() {
                         screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync in progress, saving is OFF.\r")"
                 fi
 
-                        echo "Sync in progress..."
                         mkdir -p $MC_PATH/$OFFLINE_NAME/
                         rsync -az $MC_PATH/$WORLD_NAME/ $MC_PATH/$OFFLINE_NAME/
                         WORLD_SIZE=$(du -s $MC_PATH/$WORLD_NAME/ | sed s/[[:space:]].*//g)
                         OFFLINE_SIZE=$(du -s $MC_PATH/$OFFLINE_NAME/ | sed s/[[:space:]].*//g)
                         echo "WORLD  : $WORLD_SIZE KB"
                         echo "OFFLINE: $OFFLINE_SIZE KB"
-                        echo "Sync is complete"
 
                         if [[ 1 -eq $ONLINE ]]; then
                         	echo "Issuing save-on command..."
@@ -139,6 +139,7 @@ sync_offline() {
                                 screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync is complete, saving is ON.\r")"
                 fi
                         rm $MC_PATH/synclock
+                        echo "Sync is complete"
         fi
 }
 
@@ -380,6 +381,11 @@ if [[ $# -gt 0 ]]; then
 				echo "Previous cartography run hasn't completed or has failed"
 			else
 				touch $MC_PATH/cartolock
+
+				if [[ "sync" == $2 ]]; then
+					sync_offline
+				fi
+
 				if [[ -e $CARTO_PATH ]]; then
 					if [[ -e $MC_PATH/$WORLD_NAME ]]; then
 
