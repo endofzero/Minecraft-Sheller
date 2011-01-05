@@ -1,12 +1,11 @@
 #!/bin/bash
 # original author : Relliktsohg
-# Huge thanks to Maine for his incremental backup
-# THanks to endofzero for his improved update routine
+# continued contributions: Maine, endofzero
+# dopeghoti
 
 #	Configuration
 
 # Main
-
 WORLD_NAME="world"
 OFFLINE_NAME=$WORLD_NAME-offline
 MC_PATH=/home/minecraft
@@ -14,12 +13,11 @@ SCREEN_NAME="minecraft"
 MEMMAX=1536
 MEMALOC=1024
 DISPLAY_ON_LAUNCH=0
-SERVER_OPTIONS="-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=2 -XX:+AggressiveOpts"
-# SERVER_OPTIONS=""
+SERVER_OPTIONS=""
 
 # Modifications
-SERVERMOD=1
-RUNECRAFT=1
+SERVERMOD=0
+RUNECRAFT=0
 
 # Backups
 BKUP_PATH=$MC_PATH/backup
@@ -30,8 +28,7 @@ BACKUP_INCR_LINK=${BKUP_PATH}/${WORLD_NAME}_incr.tgz
 
 # Logs
 LOG_TDIR=/var/www/minecraft/logs
-LOGS_DAYS=7
-LOG_MASTERFILE=master-log.log
+LOGS_DAYS=14
 
 # Mapping
 CARTO_PATH=$MC_PATH/carto
@@ -72,7 +69,7 @@ fi
 #	Then, use PS to find children of that screen whose
 #	command is 'java'.
 
-SCREEN_PID=$(screen -ls | grep $SCREEN_NAME | head -n1 | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
+SCREEN_PID=$(screen -ls | grep $SCREEN_NAME | grep -v "No Sockets Found" | head -n1 | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
 
 if [[ -z $SCREEN_PID ]]; then
 	#	Our server seems offline, because there's no screen running.
@@ -280,7 +277,6 @@ if [[ $# -gt 0 ]]; then
 				for i in *; do
 					if [[ $i != $LOG_LCK.log.lck ]]; then # skip du fichier lck
 						cat $i >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
-						cat $i >> $LOG_TDIR/$LOG_MASTERFILE
 						if [[ $i != $LOG_LCK.log ]]; then	# On ne supprime pas le fichier log courant, si le serv est en route
 							rm $i
 						fi
@@ -289,7 +285,6 @@ if [[ $# -gt 0 ]]; then
 				else
 					cd $MC_PATH
 					cat server.log >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
-					cat server.log >> $LOG_TDIR/$LOG_MASTERFILE
 				fi
 
 			if [[ -e $LOG_TDIR/ip-list.log ]]; then

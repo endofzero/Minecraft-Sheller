@@ -53,11 +53,11 @@ configuration phase has to be available to him.
 
 #### (optional)
 - I strongly recommend using crontab to automate some of the process. I 
-prefer to perform logs + cartography + server restart at 4AM 
+prefer to perform logs clean + server restart + sync + then all of my mappers at 4AM 
 every day. 
 - The 'logs' command should always be used BEFORE a restart, as 
 the restart wipes the previous logs. I'm running hey0's servermod, which 
-allows to have a log history, but thats not the case for everyone.
+allows to have a log history, but that's not the case for everyone.
 - I also recommend setting an Internet public folder, for the maps 
 images to be displayed. People on my server love this feature, as they 
 know a new map is generated every day, and they can see the evolution of 
@@ -73,6 +73,14 @@ editing /home/USER/.bashrc, and adding the line:
 
 Considerations:
 --------------
+
+#### Space
+
+This script uses rsync to update an offline folder with the latest world information. As maps become larger, time to completion when running mappers on them increases. Having saving turned off for 15-30 minutes while a new map is being generated isn't good for the users. Saving is now only turned off for the time it takes to sync the folders.
+
+Because of this, your world size is effectively doubled when using this script. Whenever you issue the 'minecraft.sh sync' command, you will be shown the size of the two directories in KB.
+
+#### Overviewer 
 
 If using [Brownan's Overviewer](http://github.com/brownan/Minecraft-Overviewer) to create Google-like maps of your worlds, 
 be sure you are using the --cachedir=/path/to/dir to change the location 
@@ -92,6 +100,9 @@ Open minecraft.sh with a text editor, and edit the following lines, at the begin
     WORLD_NAME="world"
 This is the path to the world folder
 
+    OFFLINE_NAME=$WORLD_NAME-offline
+This is the name to the offline world folder that sync and all mapper functions use to process the world. This is saved in the same directory as your world folder.
+
     SCREEN_NAME="minecraft"
 This is the name of the screen the server will be run on
 
@@ -110,7 +121,7 @@ This is the path to your minecraft folder
     SERVER_OPTIONS=""
 This is where you would place any desired flags for running your server.
 
-EXAMPLE:
+###### EXAMPLE:
     SERVER_OPTIONS="-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=2 -XX:+AggressiveOpts"
 
 **Modifications**
@@ -169,12 +180,15 @@ This is the location where Overviewer will render
     MCOVERVIEWER_CACHE_PATH=/var/www/minecraft/maps/Overview/cache/
 This is the path for the cache directory for Overviewer
 
+    MCOVERVIEWER_OPTIONS="--lighting"
+This contains all of the options you want when running Overviewer.
+
 ### Detailed Command Usage
 
 ##### ./minecraft.sh
 Without arguments, the script will resume the server screen. 
 (If you want to close the screen without shutting down the server, use 
-CTRL+A then press D to detatch the screen)
+CTRL+A then press D to detach the screen)
 ##### ./minecraft.sh status
 Tells you if the servers seems to be running, or not.
 ##### ./minecraft.sh start [force]
@@ -182,7 +196,7 @@ Starts the server. If you know your server is not running, but the script believ
 ##### ./minecraft.sh stop [force]
 Self explainatory
 ##### ./minecraft.sh restart [warn]
-If the warn option is specified, it will display a warnning 30s & 10s before the restart happens.
+If the warn option is specified, it will display a warning 30s & 10s before the restart happens.
 ##### ./minecraft.sh logs [clean]
 Parses logs into several files, grouped into a folder named with the date of the logging.
 If the clean option is specified, it will move the older folders into the backup folder.
@@ -222,9 +236,9 @@ I strongly recommend the MAPS_PATH to be an internet public folder.
 Displays a message to the players if the server is online, stops the writing of chunks, initiates Brownan's Overviewer script.
 I strongly recommend the MCOVERVIER_MAPS_PATH to be an internet public folder as well.
 ##### ./minecraft.sh biome
-Running the extractor will disable saving, make a copy of your world, run the calculations, move the data into your world folder, before deleting the copy that is made and saving is turned back on.
+Running the extractor will update any biome information from new chunks.
 ##### ./minecraft.sh update
-Stops the server if it is online, backs up the old binairies, downloads the last binaries from mincraft.net and restarts 
+Stops the server if it is online, backs up the old binaries, downloads the last binaries from minecraft.net and restarts 
 the server.
 
 
