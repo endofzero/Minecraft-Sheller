@@ -414,6 +414,10 @@ if [[ $# -gt 0 ]]; then
 			if [[ -e $BIOME_PATH ]]; then
 				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
 
+					if [[ "sync" == $2 ]]; then
+						sync_offline
+					fi
+
 					echo "Biome extraction in progress..."
 					java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui $MC_PATH/$OFFLINE_NAME/
 					cp -ru $MC_PATH/$OFFLINE_NAME/EXTRACTEDBIOMES/ $MC_PATH/$WORLD_NAME/EXTRACTEDBIOMES/
@@ -432,6 +436,11 @@ if [[ $# -gt 0 ]]; then
 				echo "Previous overview run hasn't completed or has failed"
 			else
 				touch $MC_PATH/overviewlock
+
+				if [[ "sync" == $2 ]]; then
+					sync_offline
+				fi
+
 				if [[ -e $MCOVERVIEWER_PATH ]];  then
 					if [[ -e $MC_PATH/$WORLD_NAME ]]; then
 
@@ -486,8 +495,7 @@ if [[ $# -gt 0 ]]; then
 				echo "Downloading Runecraft..."
 				mkdir -p ModTmp
 				cd ModTmp/
-				wget 
-http://llama.cerberusstudios.net/runecraft/trunk/runecraft_latest.zip
+				wget http://llama.cerberusstudios.net/runecraft/trunk/runecraft_latest.zip
 				unzip runecraft_latest.zip
 				jar uvf $MC_PATH/minecraft_server.jar *.class
 				cd $MC_PATH
@@ -501,7 +509,7 @@ http://llama.cerberusstudios.net/runecraft/trunk/runecraft_latest.zip
 		;;
 		#################################################################
 		*)
-			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | tell user 'message' | logs [clean] 
+			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | tell user 'message' | logs [clean]"
 			echo "backup [full] | sync | cartography [sync]| biome [sync] | overviewer [sync] | update>"
 		;;
 	esac
