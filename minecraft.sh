@@ -303,7 +303,22 @@ if [[ $# -gt 0 ]]; then
 			;;
 		#################################################################
 		"backup")
-			mkdir -p $BKUP_PATH
+
+			if [[ -e $BKUP_PATH/$WORLD_NAME.lock ]]; then
+				echo "Backup already in progress.  Aborting."
+				exit 1
+			else
+				touch $BKUP_PATH/$WORLD_NAME.lock
+			fi
+			
+			if [[ ! -d $BKUP_PATH  ]]; then
+				if ! mkdir -p $BKUP_PATH; then
+					echo "Backup path $BKUP_PATH does not exist and I could not create the directory!"
+					rm $BKUP_PATH/$WORLD_NAME.lock
+					exit 1
+				fi
+			fi
+
 			cd $BKUP_PATH
 
 			if [[ -e $MC_PATH/$WORLD_NAME ]]; then
@@ -326,7 +341,7 @@ if [[ $# -gt 0 ]]; then
 				FILENAME=$WORLD_NAME-$DATE
 				BACKUP_FILES=$BKUP_PATH/list.$DATE
 
-				if [[ "full" == $2 ]]; then
+				if [[ full == $2 ]]; then
 					# If full flag set, Make full backup, and remove old incrementals
 					FILENAME=$FILENAME-full.tgz
 
@@ -366,6 +381,7 @@ if [[ $# -gt 0 ]]; then
 			else
 				echo "The world \"$WORLD_NAME\" does not exist.";
 			fi
+			rm $BKUP_PATH/$WORLD_NAME.lock
 			;;
 		#################################################################
 		"cartography")
