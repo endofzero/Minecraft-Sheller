@@ -149,7 +149,7 @@ if [[ $# -gt 0 ]]; then
 			else 
 				echo "Minecraft server seems OFFLINE."
 			fi
-		;;
+			;;
 		#################################################################
 		"start")
 			if [[ 1 -eq $ONLINE ]]; then
@@ -175,7 +175,7 @@ if [[ $# -gt 0 ]]; then
 					display
 				fi	
 			fi
-		;;
+			;;
 		#################################################################
 		"stop")
 			if [[ 1 -eq $ONLINE ]]; then
@@ -200,7 +200,7 @@ if [[ $# -gt 0 ]]; then
 					;;
 				esac
 			fi
-		;;
+			;;
 		#################################################################
 		"restart")
 			if [[ 1 -eq $ONLINE ]]; then
@@ -218,7 +218,7 @@ if [[ $# -gt 0 ]]; then
 			if [[ 1 -eq $DISPLAY_ON_LAUNCH ]]; then
 				display
 			fi
-		;;
+			;;
 		#################################################################
 		"say")
 			if [[ 1 -eq $ONLINE ]]; then
@@ -227,7 +227,7 @@ if [[ $# -gt 0 ]]; then
 			else
 				echo "Server seems to be offline..."
 			fi
-		;;
+			;;
 		#################################################################
 		"tell")
 			if [[ 1 -eq $ONLINE ]]; then
@@ -236,11 +236,11 @@ if [[ $# -gt 0 ]]; then
 			else
 				echo "Server seems to be offline..."
 			fi
-		;;
+			;;
 		#################################################################
 		"sync")
 			sync_offline			
-		;;
+			;;
 		#################################################################
 		"logs")
 			mkdir -p $LOG_TDIR		
@@ -300,7 +300,7 @@ if [[ $# -gt 0 ]]; then
 			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep '<[a-zA-Z0-9_]+>|\[CONSOLE\]' | sed -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).\[INFO\]./\1 /g' >> $LOG_TDIR/$LOG_NEWDIR/chat-$DATE.log
 
 			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep 'Internal exception|error' | sed -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).\[INFO\]./\1\t/g' >> $LOG_TDIR/$LOG_NEWDIR/errors-$DATE.log
-		;;
+			;;
 		#################################################################
 		"backup")
 			mkdir -p $BKUP_PATH
@@ -369,7 +369,7 @@ if [[ $# -gt 0 ]]; then
 			else
 				echo "The world \"$WORLD_NAME\" does not exist.";
 			fi
-		;;
+			;;
 		#################################################################
 		"cartography")
 			if [[ -e $MC_PATH/cartolock ]]; then
@@ -403,7 +403,7 @@ if [[ $# -gt 0 ]]; then
 				fi
 				rm $MC_PATH/cartolock
 			fi
-		;;
+			;;
 		#################################################################
 		"biome")
 			if [[ -e $BIOME_PATH ]]; then
@@ -424,7 +424,7 @@ if [[ $# -gt 0 ]]; then
 			else
 				echo "The path to MinecraftBiomeExtractor.jar seems to be wrong."
 			fi
-		;;
+			;;
 		#################################################################
 		"overviewer")
 			if [[ -e $MC_PATH/overviewlock ]]; then
@@ -453,7 +453,7 @@ if [[ $# -gt 0 ]]; then
 				fi
 				rm $MC_PATH/overviewlock
 			fi
-		;;
+			;;
 		#################################################################
 		"update")
 			if [[ 1 -eq $ONLINE ]]; then
@@ -501,12 +501,12 @@ if [[ $# -gt 0 ]]; then
 			if [[ 1 -eq $DISPLAY_ON_LAUNCH ]]; then
 				display
 			fi
-		;;
+			;;
 		#################################################################
 		*)
 			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | tell user 'message' | logs [clean]"
 			echo "backup [full] | sync | cartography [sync]| biome [sync] | overviewer [sync] | update>"
-		;;
+			;;
 	esac
 
 else
