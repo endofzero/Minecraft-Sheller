@@ -149,7 +149,7 @@ if [[ $# -gt 0 ]]; then
 			else 
 				echo "Minecraft server seems OFFLINE."
 			fi
-		;;
+			;;
 		#################################################################
 		"start")
 			if [[ 1 -eq $ONLINE ]]; then
@@ -175,7 +175,7 @@ if [[ $# -gt 0 ]]; then
 					display
 				fi	
 			fi
-		;;
+			;;
 		#################################################################
 		"stop")
 			if [[ 1 -eq $ONLINE ]]; then
@@ -200,7 +200,7 @@ if [[ $# -gt 0 ]]; then
 					;;
 				esac
 			fi
-		;;
+			;;
 		#################################################################
 		"restart")
 			if [[ 1 -eq $ONLINE ]]; then
@@ -218,7 +218,7 @@ if [[ $# -gt 0 ]]; then
 			if [[ 1 -eq $DISPLAY_ON_LAUNCH ]]; then
 				display
 			fi
-		;;
+			;;
 		#################################################################
 		"say")
 			if [[ 1 -eq $ONLINE ]]; then
@@ -227,7 +227,7 @@ if [[ $# -gt 0 ]]; then
 			else
 				echo "Server seems to be offline..."
 			fi
-		;;
+			;;
 		#################################################################
 		"tell")
 			if [[ 1 -eq $ONLINE ]]; then
@@ -236,11 +236,11 @@ if [[ $# -gt 0 ]]; then
 			else
 				echo "Server seems to be offline..."
 			fi
-		;;
+			;;
 		#################################################################
 		"sync")
 			sync_offline			
-		;;
+			;;
 		#################################################################
 		"logs")
 			mkdir -p $LOG_TDIR		
@@ -300,10 +300,25 @@ if [[ $# -gt 0 ]]; then
 			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep '<[a-zA-Z0-9_]+>|\[CONSOLE\]' | sed -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).\[INFO\]./\1 /g' >> $LOG_TDIR/$LOG_NEWDIR/chat-$DATE.log
 
 			cat $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE | egrep 'Internal exception|error' | sed -e 's/.*\([0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}\).\[INFO\]./\1\t/g' >> $LOG_TDIR/$LOG_NEWDIR/errors-$DATE.log
-		;;
+			;;
 		#################################################################
 		"backup")
-			mkdir -p $BKUP_PATH
+
+			if [[ -e $BKUP_PATH/$WORLD_NAME.lock ]]; then
+				echo "Backup already in progress.  Aborting."
+				exit 1
+			else
+				touch $BKUP_PATH/$WORLD_NAME.lock
+			fi
+			
+			if [[ ! -d $BKUP_PATH  ]]; then
+				if ! mkdir -p $BKUP_PATH; then
+					echo "Backup path $BKUP_PATH does not exist and I could not create the directory!"
+					rm $BKUP_PATH/$WORLD_NAME.lock
+					exit 1
+				fi
+			fi
+
 			cd $BKUP_PATH
 
 			if [[ -e $MC_PATH/$WORLD_NAME ]]; then
@@ -326,20 +341,18 @@ if [[ $# -gt 0 ]]; then
 				FILENAME=$WORLD_NAME-$DATE
 				BACKUP_FILES=$BKUP_PATH/list.$DATE
 
-				if [[ "full" == $2 ]]; then
+				if [[ full == $2 ]]; then
 					# If full flag set, Make full backup, and remove old incrementals
 					FILENAME=$FILENAME-full.tgz
 
 					# Remove incrementals older than $BKUP_DAYS_INCR
 					# Remove full archives older than $BKUP_DAYS_FULL
-					find ./$WORLD_NAME-*-incr.tgz -type f -mtime +$BKUP_DAYS_INCR -print > purgelist
-					find ./$WORLD_NAME-*-full.tgz -type f -mtime +$BKUP_DAYS_FULL -print >> purgelist
-					rm -f $(cat purgelist) purgelist
+					rm -f $(find ./$WORLD_NAME-*-incr.tgz -type f -mtime +$BKUP_DAYS_INCR -print) \
+				              $(find ./$WORLD_NAME-*-full.tgz -type f -mtime +$BKUP_DAYS_FULL -print)
 
 					# Now make our full backup
 					pushd $MC_PATH
-					find $WORLD_NAME -type f -print > $BACKUP_FILES
-					tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
+					tar -zcf $BKUP_PATH/$FILENAME -- $(find $WORLD_NAME -type f -print)
 					popd
 
 					rm -f $BACKUP_FULL_LINK $BACKUP_INCR_LINK
@@ -349,8 +362,7 @@ if [[ $# -gt 0 ]]; then
 					FILENAME=$FILENAME-incr.tgz
 
 					pushd $MC_PATH
-					find $WORLD_NAME -newer $BACKUP_FULL_LINK -type f -print > $BACKUP_FILES
-					tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
+					tar -zcf $BKUP_PATH/$FILENAME -- $(find $WORLD_NAME -newer $BACKUP_FULL_LINK -type f -print)
 					popd
 
 					rm -f $BACKUP_INCR_LINK
@@ -369,7 +381,8 @@ if [[ $# -gt 0 ]]; then
 			else
 				echo "The world \"$WORLD_NAME\" does not exist.";
 			fi
-		;;
+			rm $BKUP_PATH/$WORLD_NAME.lock
+			;;
 		#################################################################
 		"cartography")
 			if [[ -e $MC_PATH/cartolock ]]; then
@@ -405,7 +418,7 @@ if [[ $# -gt 0 ]]; then
 				fi
 				rm $MC_PATH/cartolock
 			fi
-		;;
+			;;
 		#################################################################
 		"biome")
 			if [[ -e $BIOME_PATH ]]; then
@@ -426,7 +439,7 @@ if [[ $# -gt 0 ]]; then
 			else
 				echo "The path to MinecraftBiomeExtractor.jar seems to be wrong."
 			fi
-		;;
+			;;
 		#################################################################
 		"overviewer")
 			if [[ -e $MC_PATH/overviewlock ]]; then
@@ -455,7 +468,7 @@ if [[ $# -gt 0 ]]; then
 				fi
 				rm $MC_PATH/overviewlock
 			fi
-		;;
+			;;
 		#################################################################
 		"update")
 			if [[ 1 -eq $ONLINE ]]; then
@@ -503,12 +516,12 @@ if [[ $# -gt 0 ]]; then
 			if [[ 1 -eq $DISPLAY_ON_LAUNCH ]]; then
 				display
 			fi
-		;;
+			;;
 		#################################################################
 		*)
 			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | tell user 'message' | logs [clean]"
 			echo "backup [full] | sync | cartography [sync]| biome [sync] | overviewer [sync] | update>"
-		;;
+			;;
 	esac
 
 else
