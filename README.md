@@ -232,14 +232,14 @@ the commands. The size of both folders will be displayed.
 ##### ./minecraft.sh cartography [sync]
 Displays a message to the players if the server is online, stops the writing of chunks, initiates c10t's cartography script.
 I strongly recommend the MAPS_PATH to be an internet public folder.
-**They sync option will sync the world before mapping occurs.**
+**The sync option will sync the world before mapping occurs.**
 ##### ./minecraft.sh overviewer [sync]
 Displays a message to the players if the server is online, stops the writing of chunks, initiates Brownan's Overviewer script.
-**They sync option will sync the world before mapping occurs.**
+**The sync option will sync the world before mapping occurs.**
 I strongly recommend the MCOVERVIER_MAPS_PATH to be an internet public folder as well.
 ##### ./minecraft.sh biome [sync]
 Running the extractor will update any biome information from new chunks.
-**They sync option will sync the world before mapping occurs.**
+**The sync option will sync the world before mapping occurs.**
 ##### ./minecraft.sh update
 Stops the server if it is online, backs up the old binaries, downloads the last binaries from minecraft.net and restarts 
 the server. If RUNECRAFT=1, then the latest version of Runecraft will be downloaded and injected into the JAR. This is 
