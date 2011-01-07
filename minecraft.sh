@@ -1,7 +1,8 @@
 #!/bin/bash
 # original author : Relliktsohg
 # continued contributions: Maine, endofzero
-# dopeghoti
+# dopeghoti, demonspork, robbiet480
+# https://github.com/endofzero/Minecraft-Sheller
 
 #	Configuration
 
