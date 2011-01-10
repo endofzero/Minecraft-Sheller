@@ -37,7 +37,7 @@ Or:
 
 ### Biome Extractor
 
-- Download from Donkey Kong's post (was tested as of 0.6a):
+- Download from Donkey Kong's post (was tested as of 0.7a):
 
 [http://www.minecraftforum.net/viewtopic.php?f=25&t=80902](http://www.minecraftforum.net/viewtopic.php?f=25&t=80902)
 
