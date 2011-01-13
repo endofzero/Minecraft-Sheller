@@ -1,7 +1,8 @@
 #!/bin/bash
 # original author : Relliktsohg
 # continued contributions: Maine, endofzero
-# dopeghoti
+# dopeghoti, demonspork, robbiet480
+# https://github.com/endofzero/Minecraft-Sheller
 
 #	Configuration
 
@@ -16,8 +17,8 @@ DISPLAY_ON_LAUNCH=0
 SERVER_OPTIONS=""
 
 # Modifications
-SERVERMOD=1
-RUNECRAFT=1
+SERVERMOD=0
+RUNECRAFT=0
 
 # Backups
 BKUP_PATH=$MC_PATH/backup
@@ -95,9 +96,9 @@ server_launch() {
 		cd $MC_PATH
 		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar minecraft_server.jar nogui
 		sleep 1
-	fi		
+	fi
 }
-	
+
 server_stop() {
 	echo "Stopping minecraft server..."
 	screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "stop.\r")"
@@ -146,7 +147,7 @@ if [[ $# -gt 0 ]]; then
 		"status")
 			if [[ 1 -eq $ONLINE ]]; then
 				echo "Minecraft server seems ONLINE."
-			else 
+			else
 				echo "Minecraft server seems OFFLINE."
 			fi
 			;;
@@ -173,7 +174,7 @@ if [[ $# -gt 0 ]]; then
 				server_launch
 				if [[ 1 -eq $DISPLAY_ON_LAUNCH ]]; then
 					display
-				fi	
+				fi
 			fi
 			;;
 		#################################################################
@@ -239,11 +240,11 @@ if [[ $# -gt 0 ]]; then
 			;;
 		#################################################################
 		"sync")
-			sync_offline			
+			sync_offline
 			;;
 		#################################################################
 		"logs")
-			mkdir -p $LOG_TDIR		
+			mkdir -p $LOG_TDIR
 			cd $LOG_TDIR
 
 			case $2 in
@@ -310,7 +311,7 @@ if [[ $# -gt 0 ]]; then
 			else
 				touch $BKUP_PATH/$WORLD_NAME.lock
 			fi
-			
+
 			if [[ ! -d $BKUP_PATH  ]]; then
 				if ! mkdir -p $BKUP_PATH; then
 					echo "Backup path $BKUP_PATH does not exist and I could not create the directory!"
@@ -322,7 +323,7 @@ if [[ $# -gt 0 ]]; then
 			cd $BKUP_PATH
 
 			if [[ -e $MC_PATH/$WORLD_NAME ]]; then
-				if [[ $ONLINE -eq 1 ]]; then 
+				if [[ $ONLINE -eq 1 ]]; then
 					echo "Server running, warning players : backup in 10s."
 					screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Backing up the map in 10s\r")"
 					sleep 10
@@ -455,7 +456,7 @@ if [[ $# -gt 0 ]]; then
 					if [[ -e $MC_PATH/$WORLD_NAME ]]; then
 
 						mkdir -p $MCOVERVIEWER_MAPS_PATH
-	
+
 						echo "Minecraft-Overviewer in progress..."
 						python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$OFFLINE_NAME $MCOVERVIEWER_MAPS_PATH
 						echo "Minecraft-Overviewer is done."
@@ -478,7 +479,7 @@ if [[ $# -gt 0 ]]; then
 			mkdir -p $BKUP_PATH
 
 			echo "Backing up current binaries..."
-			DATE=$(date +%Y-%m-%d)			
+			DATE=$(date +%Y-%m-%d)
 			cd $MC_PATH
 			if [[ 1 -eq $SERVERMOD ]]; then
 				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar Minecraft_Mod.jar
@@ -499,7 +500,7 @@ if [[ $# -gt 0 ]]; then
 				cp -f version.txt $MC_PATH/version.txt
 				cp bin/Minecraft_Mod.jar $MC_PATH/Minecraft_Mod.jar
 				cd $MC_PATH
-				rm -rf ModTmp    
+				rm -rf ModTmp
 			fi
 			if [[ 1 -eq $RUNECRAFT ]];  then
 				echo "Downloading Runecraft..."

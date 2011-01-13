@@ -229,17 +229,22 @@ Correct: ./minecraft.sh tell test_user "This is a private message"
 This updates the offline folder to have the most recent information from the online folder This needs to be ran before you update any maps via 
 the commands. The size of both folders will be displayed.
 
-##### ./minecraft.sh cartography
+##### ./minecraft.sh cartography [sync]
 Displays a message to the players if the server is online, stops the writing of chunks, initiates c10t's cartography script.
 I strongly recommend the MAPS_PATH to be an internet public folder.
-##### ./minecraft.sh overviewer
+**The sync option will sync the world before mapping occurs.**
+##### ./minecraft.sh overviewer [sync]
 Displays a message to the players if the server is online, stops the writing of chunks, initiates Brownan's Overviewer script.
+**The sync option will sync the world before mapping occurs.**
 I strongly recommend the MCOVERVIER_MAPS_PATH to be an internet public folder as well.
-##### ./minecraft.sh biome
+##### ./minecraft.sh biome [sync]
 Running the extractor will update any biome information from new chunks.
+**The sync option will sync the world before mapping occurs.**
 ##### ./minecraft.sh update
 Stops the server if it is online, backs up the old binaries, downloads the last binaries from minecraft.net and restarts 
-the server.
+the server. If RUNECRAFT=1, then the latest version of Runecraft will be downloaded and injected into the JAR. This is 
+the only way to have runecraft installed. If you want Runecraft, but not hMod, then you would set SERVERMOD=0 and RUNECRAFT=1.
+You would then run _'./minecraft.sh update'_ to inject Runecraft into just the vanilla server jar (the latest one, of course).
 
 
 ### Future updates :
