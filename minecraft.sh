@@ -240,6 +240,11 @@ if [[ $# -gt 0 ]]; then
 			;;
 		#################################################################
 		"sync")
+			if [[ "purge" == $2 ]]; then
+        	        	echo "Purging offline folder..."
+				rm -rf $MC_PATH/$OFFLINE_NAME/
+				echo "Purge Complete"
+			fi
 			sync_offline
 			;;
 		#################################################################
@@ -521,7 +526,7 @@ if [[ $# -gt 0 ]]; then
 		#################################################################
 		*)
 			echo "Usage : minecraft <status | start [force] | stop | restart [warn] | say 'message' | tell user 'message' | logs [clean]"
-			echo "backup [full] | sync | cartography [sync]| biome [sync] | overviewer [sync] | update>"
+			echo "backup [full] | sync [purge] | cartography [sync] | biome [sync] | overviewer [sync] | update>"
 			;;
 	esac
 
