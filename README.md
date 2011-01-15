@@ -225,9 +225,11 @@ Incorrect: ./minecraft.sh tell test_user This is a private message
 
 Correct: ./minecraft.sh tell test_user "This is a private message"
 
-##### ./minecraft.sh sync
+##### ./minecraft.sh sync [purge]
 This updates the offline folder to have the most recent information from the online folder This needs to be ran before you update any maps via 
 the commands. The size of both folders will be displayed.
+
+**The purge option will delete the offline folder before a sync is performed. This is useful for when you delete chunks from your online world and need those deletions to be transfered to the offline folder.**
 
 ##### ./minecraft.sh cartography [sync]
 Displays a message to the players if the server is online, stops the writing of chunks, initiates c10t's cartography script.
