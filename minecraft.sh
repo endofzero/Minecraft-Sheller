@@ -18,7 +18,7 @@ SERVER_OPTIONS=""
 
 # Modifications
 SERVERMOD=0
-RUNECRAFT=0
+RUNECRAFT=1
 
 # Backups
 BKUP_PATH=$MC_PATH/backup
@@ -509,7 +509,7 @@ if [[ $# -gt 0 ]]; then
 				echo "Downloading Runecraft..."
 				mkdir -p ModTmp
 				cd ModTmp/
-				wget http://llama.cerberusstudios.net/runecraft/trunk/runecraft_latest.zip
+				wget http://llama.cerberusstudios.net/runecraft_latest.zip
 				unzip runecraft_latest.zip
 				jar uvf $MC_PATH/minecraft_server.jar *.class
 				cd $MC_PATH
