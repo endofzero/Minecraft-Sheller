@@ -18,7 +18,7 @@ SERVER_OPTIONS=""
 
 # Modifications
 SERVERMOD=0
-RUNECRAFT=1
+RUNECRAFT=0
 
 # Backups
 BKUP_PATH=$MC_PATH/backup
