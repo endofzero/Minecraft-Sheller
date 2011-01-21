@@ -437,7 +437,6 @@ if [[ $# -gt 0 ]]; then
 
 					echo "Biome extraction in progress..."
 					java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui $MC_PATH/$OFFLINE_NAME/
-					cp -ru $MC_PATH/$OFFLINE_NAME/EXTRACTEDBIOMES/ $MC_PATH/$WORLD_NAME/EXTRACTEDBIOMES/
 					echo "Biome extraction is complete"
 
 				else
