@@ -353,12 +353,14 @@ if [[ $# -gt 0 ]]; then
 
 					# Remove incrementals older than $BKUP_DAYS_INCR
 					# Remove full archives older than $BKUP_DAYS_FULL
-					rm -f $(find ./$WORLD_NAME-*-incr.tgz -type f -mtime +$BKUP_DAYS_INCR -print) \
-				              $(find ./$WORLD_NAME-*-full.tgz -type f -mtime +$BKUP_DAYS_FULL -print)
+					find ./$WORLD_NAME-*-incr.tgz -type f -mtime +$BKUP_DAYS_INCR -print > purgelist
+					find ./$WORLD_NAME-*-full.tgz -type f -mtime +$BKUP_DAYS_FULL -print >> purgelist
+					rm -f $(cat purgelist) purgelist
 
 					# Now make our full backup
 					pushd $MC_PATH
-					tar -zcf $BKUP_PATH/$FILENAME -- $(find $WORLD_NAME -type f -print)
+					find $WORLD_NAME -type f -print > $BACKUP_FILES
+					tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
 					popd
 
 					rm -f $BACKUP_FULL_LINK $BACKUP_INCR_LINK
@@ -368,7 +370,8 @@ if [[ $# -gt 0 ]]; then
 					FILENAME=$FILENAME-incr.tgz
 
 					pushd $MC_PATH
-					tar -zcf $BKUP_PATH/$FILENAME -- $(find $WORLD_NAME -newer $BACKUP_FULL_LINK -type f -print)
+					find $WORLD_NAME -newer $BACKUP_FULL_LINK -type f -print > $BACKUP_FILES
+					tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
 					popd
 
 					rm -f $BACKUP_INCR_LINK
