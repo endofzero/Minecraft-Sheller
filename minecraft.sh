@@ -87,9 +87,9 @@ display() {
 server_launch() {
 	echo "Launching minecraft server..."
 	if [[ 1 -eq $SERVERMOD ]]; then
-		echo "Minecraft_Mod.jar"
+		echo "craftbukkit.jar"
 		cd $MC_PATH
-		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar Minecraft_Mod.jar nogui
+		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar craftbukkit.jar nogui
 		sleep 1
 	else
 		echo "minecraft_server.jar"
