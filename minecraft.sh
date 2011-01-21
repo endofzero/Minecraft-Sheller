@@ -124,7 +124,7 @@ sync_offline() {
                 fi
 
                         mkdir -p $MC_PATH/$OFFLINE_NAME/
-                        rsync -az $MC_PATH/$WORLD_NAME/ $MC_PATH/$OFFLINE_NAME/
+                        rsync -a $MC_PATH/$WORLD_NAME/ $MC_PATH/$OFFLINE_NAME/
                         WORLD_SIZE=$(du -s $MC_PATH/$WORLD_NAME/ | sed s/[[:space:]].*//g)
                         OFFLINE_SIZE=$(du -s $MC_PATH/$OFFLINE_NAME/ | sed s/[[:space:]].*//g)
                         echo "WORLD  : $WORLD_SIZE KB"
