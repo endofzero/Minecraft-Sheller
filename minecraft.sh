@@ -44,21 +44,12 @@ MCOVERVIEWER_OPTIONS="--lighting"
 
 # 	End of configuration
 
-if [[ 1 -eq $SERVERMOD  ]]; then
-	locks=$(ls $MC_PATH/logs/*.log.lck 2> /dev/null | wc -l)
-	if [[ "0" != "$locks" ]]; then
-		ONLINE=1
-	else
-		ONLINE=0
-	fi
-else
 	if [[ -e $MC_PATH/server.log.lck ]]; then
 		#       ps -e | grep java | wc -l
 		ONLINE=1
 	else
 		ONLINE=0
 	fi
-fi
 
 #	Get the PID of our Java process for later use.  Better
 #	than just killing the lowest PID java process like the
@@ -70,7 +61,7 @@ fi
 #	Then, use PS to find children of that screen whose
 #	command is 'java'.
 
-SCREEN_PID=$(screen -ls | grep $SCREEN_NAME | grep -iv "No sockets found" | head -n1 | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
+SCREEN_PID=$(screen -list | grep $SCREEN_NAME | grep -iv "No sockets found" | head -n1 | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
 
 if [[ -z $SCREEN_PID ]]; then
 	#	Our server seems offline, because there's no screen running.
@@ -271,27 +262,28 @@ if [[ $# -gt 0 ]]; then
 			DATE=$(date +%d-%m-%Hh%M)
 			LOG_TFILE=logs-$DATE.log
 
-			if [[ 1 -eq $SERVERMOD ]]; then
-				if [[ 1 -eq $ONLINE ]]; then
-					LOG_LCK=$(basename $MC_PATH/logs/*.log.lck .log.lck)
-					echo "Found a log lock : $LOG_LCK"
-				else
-					LOG_LCK=""
-				fi
-
-				cd $MC_PATH/logs/
-				for i in *; do
-					if [[ $i != $LOG_LCK.log.lck ]]; then # skip du fichier lck
-						cat $i >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
-						if [[ $i != $LOG_LCK.log ]]; then	# On ne supprime pas le fichier log courant, si le serv est en route
-							rm $i
-						fi
-					fi
-				done
-				else
+#			if [[ 1 -eq $SERVERMOD ]]; then
+#				if [[ 1 -eq $ONLINE ]]; then
+#					LOG_LCK=$(basename $MC_PATH/logs/*.log.lck .log.lck)
+#					echo "Found a log lock : $LOG_LCK"
+#				else
+#					LOG_LCK=""
+#				fi
+#
+#				cd $MC_PATH/logs/
+#				for i in *; do
+#					if [[ $i != $LOG_LCK.log.lck ]]; then # skip du fichier lck
+#						cat $i >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
+#						cat $i >> $LOG_TDIR/$LOG_MASTERFILE
+#						if [[ $i != $LOG_LCK.log ]]; then	# On ne supprime pas le fichier log courant, si le serv est en route
+#							rm $i
+#						fi
+#					fi
+#				done
+#				else
 					cd $MC_PATH
 					cat server.log >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
-				fi
+#				fi
 
 			if [[ -e $LOG_TDIR/ip-list.log ]]; then
 				cat $LOG_TDIR/ip-list.log | sort | uniq > $LOG_TDIR/templist.log
