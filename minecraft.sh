@@ -198,8 +198,10 @@ if [[ $# -gt 0 ]]; then
 			if [[ 1 -eq $ONLINE ]]; then
 				case $2 in
 					"warn")
+						echo "30 Second Warning."
 						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Server will restart in 30s !\r")"
 						sleep 20
+						echo "10 Second Warning."
 						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Server will restart in 10s !\r")"
 						sleep 10
 					;;
