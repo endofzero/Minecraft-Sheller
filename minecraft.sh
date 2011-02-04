@@ -1,4 +1,5 @@
 #!/bin/bash
+# version 2.2 (2/3/11)
 # original author : Relliktsohg
 # continued contributions: Maine, endofzero
 # dopeghoti, demonspork, robbiet480
