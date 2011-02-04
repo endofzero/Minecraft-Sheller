@@ -481,8 +481,8 @@ if [[ $# -gt 0 ]]; then
 			DATE=$(date +%Y-%m-%d)
 			cd $MC_PATH
 			if [[ 1 -eq $SERVERMOD ]]; then
-				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar Minecraft_Mod.jar
-				rm Minecraft_Mod.jar
+				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar craftbukkit.jar
+#				rm craftbukkit.jar
 			else
 				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar
 			fi
@@ -491,15 +491,8 @@ if [[ $# -gt 0 ]]; then
 			echo "Downloading new binaries..."
 			wget -N http://www.minecraft.net/download/minecraft_server.jar
 			if [[ 1 -eq $SERVERMOD ]]; then
-				echo "Downloading hey0's serverMod..."
-				mkdir -p ModTmp
-				cd ModTmp/
-				wget -O Minecraft_Mod.zip http://hey0.net/get.php?dl=serverbeta
-				unzip Minecraft_Mod.zip
-				cp -f version.txt $MC_PATH/version.txt
-				cp bin/Minecraft_Mod.jar $MC_PATH/Minecraft_Mod.jar
-				cd $MC_PATH
-				rm -rf ModTmp
+				echo "Downloading Bukkit..."
+				echo "Nothing downloaded as this is a placeholder"
 			fi
 			if [[ 1 -eq $RUNECRAFT ]];  then
 				echo "Downloading Runecraft..."
