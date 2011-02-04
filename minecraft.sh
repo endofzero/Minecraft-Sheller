@@ -19,6 +19,7 @@ SERVER_OPTIONS=""
 
 # Modifications
 SERVERMOD=0
+MODJAR=craftbukkit.jar
 RUNECRAFT=0
 
 # Backups
@@ -79,9 +80,9 @@ display() {
 server_launch() {
 	echo "Launching minecraft server..."
 	if [[ 1 -eq $SERVERMOD ]]; then
-		echo "craftbukkit.jar"
+		echo $MODJAR
 		cd $MC_PATH
-		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar craftbukkit.jar nogui
+		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar $MODJAR nogui
 		sleep 1
 	else
 		echo "minecraft_server.jar"
