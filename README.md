@@ -132,6 +132,10 @@ If you are running hey0's servermod, this needs to be set to 1 _(better logging 
     RUNECRAFT=0
 If you want your script to update runecraft automatically too, set this to 1
 
+    MODJAR="craftbukkit.jar"
+This is the name of the jar file for the server mod you are using. This allows you to use this script for a number of server
+mods without having to adjust other parts of the script.
+
 **Backups**
 
     BKUP_PATH=$MC_PATH/backup
