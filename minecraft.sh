@@ -19,7 +19,7 @@ SERVER_OPTIONS=""
 
 # Modifications
 SERVERMOD=0
-MODJAR=craftbukkit.jar
+MODJAR="craftbukkit.jar"
 RUNECRAFT=0
 
 # Backups
