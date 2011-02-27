@@ -8,6 +8,7 @@
 #	Configuration
 
 # Main
+PERL=$(which perl)
 WORLD_NAME="world"
 OFFLINE_NAME=$WORLD_NAME-offline
 MC_PATH=/home/minecraft
@@ -18,7 +19,7 @@ DISPLAY_ON_LAUNCH=0
 SERVER_OPTIONS=""
 
 # Modifications
-SERVERMOD=0
+SERVERMOD=1
 MODJAR="craftbukkit.jar"
 RUNECRAFT=0
 
@@ -63,14 +64,17 @@ MCOVERVIEWER_OPTIONS="--lighting"
 #	Then, use PS to find children of that screen whose
 #	command is 'java'.
 
-SCREEN_PID=$(screen -list | grep $SCREEN_NAME | grep -iv "No sockets found" | head -n1 | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
+# SCREEN_PID=$(screen -list | grep $SCREEN_NAME | grep -iv "No sockets found" | head -n1 | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
+SCREEN_PID=$(screen -ls $SCREEN_NAME | $PERL -ne 'if ($_ =~ /^\t(\d+)\.$SCREEN_NAME.*$/) { print $1; }')
+#        echo "$SCREEN_PID $JAVA_PID"
 
 if [[ -z $SCREEN_PID ]]; then
 	#	Our server seems offline, because there's no screen running.
 	#	Set MC_PID to a null value.
 	MC_PID=''
 else
-	MC_PID=$(ps --ppid $SCREEN_PID -F -C java | tail -1 | awk '{print $2}')
+#	MC_PID=$(ps $SCREEN_PID -F -C java -o pid,ppid,comm | tail -1 | awk '{print $2}')
+	MC_PID=$(ps -a -u $SCREEN_NAME -o pid,ppid,comm | $PERL -ne 'if ($_ =~ /^\s*(\d+)\s+'$SCREEN_PID'\s+java/) { print $1; }')
 fi
 
 display() {
