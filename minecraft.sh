@@ -2,13 +2,12 @@
 # version 2.2 (2/3/11)
 # original author : Relliktsohg
 # continued contributions: Maine, endofzero
-# dopeghoti, demonspork, robbiet480
+# dopeghoti, demonspork, robbiet480, sandain
 # https://github.com/endofzero/Minecraft-Sheller
 
 #	Configuration
 
 # Main
-PERL=$(which perl)
 WORLD_NAME="world"
 OFFLINE_NAME=$WORLD_NAME-offline
 MC_PATH=/home/minecraft
@@ -46,6 +45,36 @@ MCOVERVIEWER_CACHE_PATH=/var/www/minecraft/maps/Overview/cache/
 MCOVERVIEWER_OPTIONS="--lighting"
 
 # 	End of configuration
+
+# Make sure that Java, Perl, GNU Screen, and GNU Wget are installed.
+JAVA=$(which java)
+PERL=$(which perl)
+SCREEN=$(which screen)
+WGET=$(which wget)
+if [ ! -e $JAVA ]; then
+        printf "Java not found!\n"
+        printf "Try installing this with:\n"
+        printf "sudo apt-get install openjdk-6-jre\n"
+        exit 1
+fi
+if [ ! -e $PERL ]; then
+        printf "Perl not found!\n"
+        printf "Try installing this with:\n"
+        printf "sudo apt-get install perl\n"
+        exit 1
+fi
+if [ ! -e $SCREEN ]; then
+        printf "GNU Screen not found!\n"
+        printf "Try installing this with:\n"
+        printf "sudo apt-get install screen\n"
+        exit 1
+fi
+if [ ! -e $WGET ]; then
+        printf "GNU Wget not found!\n"
+        printf "Try installing this with:\n"
+        printf "sudo apt-get install wget\n"
+        exit 1
+fi
 
 	if [[ -e $MC_PATH/server.log.lck ]]; then
 		#       ps -e | grep java | wc -l
