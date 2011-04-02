@@ -13,14 +13,14 @@ OFFLINE_NAME=$WORLD_NAME-offline
 MC_PATH=/home/minecraft
 SCREEN_NAME="minecraft"
 MEMMAX=1536
-MEMALOC=1024
 DISPLAY_ON_LAUNCH=0
 SERVER_OPTIONS=""
 
 # Modifications
 SERVERMOD=1
-MODJAR="craftbukkit.jar"
-RUNECRAFT=0
+MODJAR="craftbukkit-0.0.1-SNAPSHOT.jar"
+RUNECRAFT=1
+
 
 # Backups
 BKUP_PATH=$MC_PATH/backup
@@ -115,12 +115,12 @@ server_launch() {
 	if [[ 1 -eq $SERVERMOD ]]; then
 		echo $MODJAR
 		cd $MC_PATH
-		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar $MODJAR nogui
+		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar $MODJAR nogui
 		sleep 1
 	else
 		echo "minecraft_server.jar"
 		cd $MC_PATH
-		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar minecraft_server.jar nogui
+		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar minecraft_server.jar nogui
 		sleep 1
 	fi
 }
@@ -507,6 +507,7 @@ if [[ $# -gt 0 ]]; then
 			wget -N http://www.minecraft.net/download/minecraft_server.jar
 			if [[ 1 -eq $SERVERMOD ]]; then
 				echo "Downloading Bukkit..."
+# http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
 				echo "Nothing downloaded as this is a placeholder"
 			fi
 			if [[ 1 -eq $RUNECRAFT ]];  then
