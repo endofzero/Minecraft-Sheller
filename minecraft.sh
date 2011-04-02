@@ -1,7 +1,8 @@
 #!/bin/bash
+# version 2.2 (2/3/11)
 # original author : Relliktsohg
 # continued contributions: Maine, endofzero
-# dopeghoti, demonspork, robbiet480
+# dopeghoti, demonspork, robbiet480, sandain
 # https://github.com/endofzero/Minecraft-Sheller
 
 #	Configuration
@@ -12,13 +13,14 @@ OFFLINE_NAME=$WORLD_NAME-offline
 MC_PATH=/home/minecraft
 SCREEN_NAME="minecraft"
 MEMMAX=1536
-MEMALOC=1024
 DISPLAY_ON_LAUNCH=0
 SERVER_OPTIONS=""
 
 # Modifications
-SERVERMOD=0
-RUNECRAFT=0
+SERVERMOD=1
+MODJAR="craftbukkit-0.0.1-SNAPSHOT.jar"
+RUNECRAFT=1
+
 
 # Backups
 BKUP_PATH=$MC_PATH/backup
@@ -44,21 +46,42 @@ MCOVERVIEWER_OPTIONS="--lighting"
 
 # 	End of configuration
 
-if [[ 1 -eq $SERVERMOD  ]]; then
-	locks=$(ls $MC_PATH/logs/*.log.lck 2> /dev/null | wc -l)
-	if [[ "0" != "$locks" ]]; then
-		ONLINE=1
-	else
-		ONLINE=0
-	fi
-else
+# Make sure that Java, Perl, GNU Screen, and GNU Wget are installed.
+JAVA=$(which java)
+PERL=$(which perl)
+SCREEN=$(which screen)
+WGET=$(which wget)
+if [ ! -e $JAVA ]; then
+        printf "Java not found!\n"
+        printf "Try installing this with:\n"
+        printf "sudo apt-get install openjdk-6-jre\n"
+        exit 1
+fi
+if [ ! -e $PERL ]; then
+        printf "Perl not found!\n"
+        printf "Try installing this with:\n"
+        printf "sudo apt-get install perl\n"
+        exit 1
+fi
+if [ ! -e $SCREEN ]; then
+        printf "GNU Screen not found!\n"
+        printf "Try installing this with:\n"
+        printf "sudo apt-get install screen\n"
+        exit 1
+fi
+if [ ! -e $WGET ]; then
+        printf "GNU Wget not found!\n"
+        printf "Try installing this with:\n"
+        printf "sudo apt-get install wget\n"
+        exit 1
+fi
+
 	if [[ -e $MC_PATH/server.log.lck ]]; then
 		#       ps -e | grep java | wc -l
 		ONLINE=1
 	else
 		ONLINE=0
 	fi
-fi
 
 #	Get the PID of our Java process for later use.  Better
 #	than just killing the lowest PID java process like the
@@ -70,14 +93,17 @@ fi
 #	Then, use PS to find children of that screen whose
 #	command is 'java'.
 
-SCREEN_PID=$(screen -ls | grep $SCREEN_NAME | grep -iv "No sockets found" | head -n1 | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
+# SCREEN_PID=$(screen -list | grep $SCREEN_NAME | grep -iv "No sockets found" | head -n1 | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
+SCREEN_PID=$(screen -ls $SCREEN_NAME | $PERL -ne 'if ($_ =~ /^\t(\d+)\.$SCREEN_NAME.*$/) { print $1; }')
+#        echo "$SCREEN_PID $JAVA_PID"
 
 if [[ -z $SCREEN_PID ]]; then
 	#	Our server seems offline, because there's no screen running.
 	#	Set MC_PID to a null value.
 	MC_PID=''
 else
-	MC_PID=$(ps --ppid $SCREEN_PID -F -C java | tail -1 | awk '{print $2}')
+#	MC_PID=$(ps $SCREEN_PID -F -C java -o pid,ppid,comm | tail -1 | awk '{print $2}')
+	MC_PID=$(ps -a -u $SCREEN_NAME -o pid,ppid,comm | $PERL -ne 'if ($_ =~ /^\s*(\d+)\s+'$SCREEN_PID'\s+java/) { print $1; }')
 fi
 
 display() {
@@ -87,14 +113,14 @@ display() {
 server_launch() {
 	echo "Launching minecraft server..."
 	if [[ 1 -eq $SERVERMOD ]]; then
-		echo "Minecraft_Mod.jar"
+		echo $MODJAR
 		cd $MC_PATH
-		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar Minecraft_Mod.jar nogui
+		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar $MODJAR nogui
 		sleep 1
 	else
 		echo "minecraft_server.jar"
 		cd $MC_PATH
-		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xms${MEMALOC}M -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar minecraft_server.jar nogui
+		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar minecraft_server.jar nogui
 		sleep 1
 	fi
 }
@@ -124,7 +150,7 @@ sync_offline() {
                 fi
 
                         mkdir -p $MC_PATH/$OFFLINE_NAME/
-                        rsync -az $MC_PATH/$WORLD_NAME/ $MC_PATH/$OFFLINE_NAME/
+                        rsync -a $MC_PATH/$WORLD_NAME/ $MC_PATH/$OFFLINE_NAME/
                         WORLD_SIZE=$(du -s $MC_PATH/$WORLD_NAME/ | sed s/[[:space:]].*//g)
                         OFFLINE_SIZE=$(du -s $MC_PATH/$OFFLINE_NAME/ | sed s/[[:space:]].*//g)
                         echo "WORLD  : $WORLD_SIZE KB"
@@ -207,8 +233,10 @@ if [[ $# -gt 0 ]]; then
 			if [[ 1 -eq $ONLINE ]]; then
 				case $2 in
 					"warn")
+						echo "30 Second Warning."
 						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Server will restart in 30s !\r")"
 						sleep 20
+						echo "10 Second Warning."
 						screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Server will restart in 10s !\r")"
 						sleep 10
 					;;
@@ -271,27 +299,8 @@ if [[ $# -gt 0 ]]; then
 			DATE=$(date +%d-%m-%Hh%M)
 			LOG_TFILE=logs-$DATE.log
 
-			if [[ 1 -eq $SERVERMOD ]]; then
-				if [[ 1 -eq $ONLINE ]]; then
-					LOG_LCK=$(basename $MC_PATH/logs/*.log.lck .log.lck)
-					echo "Found a log lock : $LOG_LCK"
-				else
-					LOG_LCK=""
-				fi
-
-				cd $MC_PATH/logs/
-				for i in *; do
-					if [[ $i != $LOG_LCK.log.lck ]]; then # skip du fichier lck
-						cat $i >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
-						if [[ $i != $LOG_LCK.log ]]; then	# On ne supprime pas le fichier log courant, si le serv est en route
-							rm $i
-						fi
-					fi
-				done
-				else
 					cd $MC_PATH
 					cat server.log >> $LOG_TDIR/$LOG_NEWDIR/$LOG_TFILE
-				fi
 
 			if [[ -e $LOG_TDIR/ip-list.log ]]; then
 				cat $LOG_TDIR/ip-list.log | sort | uniq > $LOG_TDIR/templist.log
@@ -353,12 +362,14 @@ if [[ $# -gt 0 ]]; then
 
 					# Remove incrementals older than $BKUP_DAYS_INCR
 					# Remove full archives older than $BKUP_DAYS_FULL
-					rm -f $(find ./$WORLD_NAME-*-incr.tgz -type f -mtime +$BKUP_DAYS_INCR -print) \
-				              $(find ./$WORLD_NAME-*-full.tgz -type f -mtime +$BKUP_DAYS_FULL -print)
+					find ./$WORLD_NAME-*-incr.tgz -type f -mtime +$BKUP_DAYS_INCR -print > purgelist
+					find ./$WORLD_NAME-*-full.tgz -type f -mtime +$BKUP_DAYS_FULL -print >> purgelist
+					rm -f $(cat purgelist) purgelist
 
 					# Now make our full backup
 					pushd $MC_PATH
-					tar -zcf $BKUP_PATH/$FILENAME -- $(find $WORLD_NAME -type f -print)
+					find $WORLD_NAME -type f -print > $BACKUP_FILES
+					tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
 					popd
 
 					rm -f $BACKUP_FULL_LINK $BACKUP_INCR_LINK
@@ -368,7 +379,8 @@ if [[ $# -gt 0 ]]; then
 					FILENAME=$FILENAME-incr.tgz
 
 					pushd $MC_PATH
-					tar -zcf $BKUP_PATH/$FILENAME -- $(find $WORLD_NAME -newer $BACKUP_FULL_LINK -type f -print)
+					find $WORLD_NAME -newer $BACKUP_FULL_LINK -type f -print > $BACKUP_FILES
+					tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
 					popd
 
 					rm -f $BACKUP_INCR_LINK
@@ -436,7 +448,6 @@ if [[ $# -gt 0 ]]; then
 
 					echo "Biome extraction in progress..."
 					java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui $MC_PATH/$OFFLINE_NAME/
-					cp -ru $MC_PATH/$OFFLINE_NAME/EXTRACTEDBIOMES/ $MC_PATH/$WORLD_NAME/EXTRACTEDBIOMES/
 					echo "Biome extraction is complete"
 
 				else
@@ -487,8 +498,8 @@ if [[ $# -gt 0 ]]; then
 			DATE=$(date +%Y-%m-%d)
 			cd $MC_PATH
 			if [[ 1 -eq $SERVERMOD ]]; then
-				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar Minecraft_Mod.jar
-				rm Minecraft_Mod.jar
+				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar $MODJAR
+#				rm craftbukkit.jar
 			else
 				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar
 			fi
@@ -497,21 +508,14 @@ if [[ $# -gt 0 ]]; then
 			echo "Downloading new binaries..."
 			wget -N http://www.minecraft.net/download/minecraft_server.jar
 			if [[ 1 -eq $SERVERMOD ]]; then
-				echo "Downloading hey0's serverMod..."
-				mkdir -p ModTmp
-				cd ModTmp/
-				wget -O Minecraft_Mod.zip http://hey0.net/get.php?dl=serverbeta
-				unzip Minecraft_Mod.zip
-				cp -f version.txt $MC_PATH/version.txt
-				cp bin/Minecraft_Mod.jar $MC_PATH/Minecraft_Mod.jar
-				cd $MC_PATH
-				rm -rf ModTmp
+				echo "Downloading Bukkit..."
+				wget -N http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar -O $MODJAR
 			fi
 			if [[ 1 -eq $RUNECRAFT ]];  then
 				echo "Downloading Runecraft..."
 				mkdir -p ModTmp
 				cd ModTmp/
-				wget http://llama.cerberusstudios.net/runecraft/trunk/runecraft_latest.zip
+				wget -N http://llama.cerberusstudios.net/runecraft_latest.zip
 				unzip runecraft_latest.zip
 				jar uvf $MC_PATH/minecraft_server.jar *.class
 				cd $MC_PATH
