@@ -496,7 +496,7 @@ if [[ $# -gt 0 ]]; then
 			DATE=$(date +%Y-%m-%d)
 			cd $MC_PATH
 			if [[ 1 -eq $SERVERMOD ]]; then
-				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar craftbukkit.jar
+				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar $MODJAR
 #				rm craftbukkit.jar
 			else
 				tar -czf minecraft_server-$DATE.tar.gz minecraft_server.jar
@@ -507,14 +507,13 @@ if [[ $# -gt 0 ]]; then
 			wget -N http://www.minecraft.net/download/minecraft_server.jar
 			if [[ 1 -eq $SERVERMOD ]]; then
 				echo "Downloading Bukkit..."
-# http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
-				echo "Nothing downloaded as this is a placeholder"
+				wget -N http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar -O $MODJAR
 			fi
 			if [[ 1 -eq $RUNECRAFT ]];  then
 				echo "Downloading Runecraft..."
 				mkdir -p ModTmp
 				cd ModTmp/
-				wget http://llama.cerberusstudios.net/runecraft_latest.zip
+				wget -N http://llama.cerberusstudios.net/runecraft_latest.zip
 				unzip runecraft_latest.zip
 				jar uvf $MC_PATH/minecraft_server.jar *.class
 				cd $MC_PATH
