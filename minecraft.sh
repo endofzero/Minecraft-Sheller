@@ -38,6 +38,7 @@ CARTO_PATH=$MC_PATH/carto
 MAPS_PATH=/var/www/minecraft/maps
 CARTO_OPTIONS="-q -s -m 4"
 BIOME_PATH=/home/minecraft/BiomeExtractor
+MAP_CHANGES=1
 
 MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
 MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview/
@@ -425,7 +426,18 @@ if [[ $# -gt 0 ]]; then
 						mv *.png $MAPS_PATH
 						cd $MC_PATH
 						echo "Cartography is done."
-
+						if [ 1 -eq $MAP_CHANGES ]; then
+							echo "Generating changes."
+							if [[ -e $MAPS_PATH/previous.png ]]; then
+			                                        cd $MAPS_PATH
+			                                        export RTMP=/tmp/makechanges.$$.
+			                                        compare previous.png current.png $RTMP.1.tga
+                        			                convert -transparent white $RTMP.1.tga $RTMP.2.tga
+			                                        composite -quality 100 $RTMP.2.tga previous.png changes/changes-$FILENAME.png
+			                                        ln changes/changes-$FILENAME.png new.png
+                        			                rm -rf previous.png $RTMP.*
+							fi
+						fi
 					else
 						echo "The world \"$WORLD_NAME\" does not exist."
 					fi
