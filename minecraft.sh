@@ -519,17 +519,23 @@ if [[ $# -gt 0 ]]; then
 			wget -N http://www.minecraft.net/download/minecraft_server.jar
 			if [[ 1 -eq $SERVERMOD ]]; then
 				echo "Downloading Bukkit..."
-				wget -N http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar -O $MODJAR
+				wget -N http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
 			fi
 			if [[ 1 -eq $RUNECRAFT ]];  then
-				echo "Downloading Runecraft..."
-				mkdir -p ModTmp
-				cd ModTmp/
-				wget -N http://llama.cerberusstudios.net/runecraft_latest.zip
-				unzip runecraft_latest.zip
-				jar uvf $MC_PATH/minecraft_server.jar *.class
-				cd $MC_PATH
-				rm -rf ModTmp 
+				if [[ 1 -eq $SERVERMOD ]];  then
+					echo "Downloading Runecraft..."
+					cd $MC_PATH/plugins/
+					wget -N http://llama.cerberusstudios.net/runecraft/runecraft_latest.jar
+				else
+					echo "Downloading Runecraft..."
+					mkdir -p ModTmp
+					cd ModTmp/
+					wget -N http://llama.cerberusstudios.net/runecraft_latest.zip
+					unzip runecraft_latest.zip
+					jar uvf $MC_PATH/minecraft_server.jar *.class
+					cd $MC_PATH
+					rm -rf ModTmp 
+				fi
 			fi
 
 			server_launch
