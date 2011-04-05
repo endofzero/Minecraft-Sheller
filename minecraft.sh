@@ -1,8 +1,8 @@
 #!/bin/bash
-# version 2.2 (2/3/11)
+# version 2.5 (4/4/11)
 # original author : Relliktsohg
 # continued contributions: Maine, endofzero
-# dopeghoti, demonspork, robbiet480, sandain
+# dopeghoti, demonspork, robbiet480, sandain, orospakr
 # https://github.com/endofzero/Minecraft-Sheller
 
 #	Configuration
@@ -104,7 +104,7 @@ if [[ -z $SCREEN_PID ]]; then
 	MC_PID=''
 else
 #	MC_PID=$(ps $SCREEN_PID -F -C java -o pid,ppid,comm | tail -1 | awk '{print $2}')
-	MC_PID=$(ps -a -u $SCREEN_NAME -o pid,ppid,comm | $PERL -ne 'if ($_ =~ /^\s*(\d+)\s+'$SCREEN_PID'\s+java/) { print $1; }')
+	MC_PID=$(ps -a -u $USER -o pid,ppid,comm | $PERL -ne 'if ($_ =~ /^\s*(\d+)\s+'$SCREEN_PID'\s+java/) { print $1; }')
 fi
 
 display() {
