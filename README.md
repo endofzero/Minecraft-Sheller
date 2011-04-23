@@ -109,9 +109,6 @@ This is the name of the screen the server will be run on
     MEMMAX=1024
 This is the maximum size of RAM you want to allow the server to use, if you are not sure, keep this and MEMALOC identical.
 
-    MEMALOC=1024
-This is the size of RAM you want to allocate to the server
-
     DISPLAY_ON_LAUNCH=1
 Do you want the screen to be displayed each time the server starts? 1 if yes, 0 if no.
 
@@ -127,14 +124,14 @@ This is where you would place any desired flags for running your server.
 **Modifications**
 
     SERVERMOD=0
-If you are running hey0's servermod, this needs to be set to 1 _(better logging and automatic updating of the mod)_
+If you are running bukkit, this needs to be set to 1 _(better logging and automatic updating of the mod)_
+
+    MODJAR="craftbukkit-0.0.1-SNAPSHOT.jar"
+This is the name of the jar file for the server mod you are using. This allows you to use this script for a number of server
+mods without having to adjust other parts of the script.
 
     RUNECRAFT=0
 If you want your script to update runecraft automatically too, set this to 1
-
-    MODJAR="craftbukkit.jar"
-This is the name of the jar file for the server mod you are using. This allows you to use this script for a number of server
-mods without having to adjust other parts of the script.
 
 **Backups**
 
@@ -172,19 +169,19 @@ This is the path to the world maps folder
     CARTO_OPTIONS="-q -s"
 This contains all of the options you want when running cartography.
 
+    MAP_CHANGES=1
+Set this to 1 if you want cartography to also create a 'changes.png' file that will show you what has changed since the last mapper, 0 will turn this feature off.
+
     BIOME_PATH=/home/minecraft/BiomeExtractor
 This is the path to MinecraftBiomeExtractor.jar 
 
     MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
-This is the path to Overviewer (gmap.py)
+This is the path to Overviewer (overviewer.py)
 
     MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview/
 This is the location where Overviewer will render
 
-    MCOVERVIEWER_CACHE_PATH=/var/www/minecraft/maps/Overview/cache/
-This is the path for the cache directory for Overviewer
-
-    MCOVERVIEWER_OPTIONS="--lighting"
+    MCOVERVIEWER_OPTIONS="--rendermodes=lighting,night"
 This contains all of the options you want when running Overviewer.
 
 ### Detailed Command Usage
@@ -213,19 +210,13 @@ This is not an error and just a notification message. Logs are being generated c
 Displays a message to the players if the server is online, stops the writing of chunks, create a dated archive and backs up the 
 world folder. If the full option is specified, it will delete the older incremental and full archives based on the settings.
 
-#####./minecraft.sh say "_message_"
+#####./minecraft.sh say _message_
 If the server is online, this will send the <message> to all users via the console.
-If the message is not surrounded by either single or double quotes, only the first word will be sent.
-
-Incorrect: ./minecraft.sh say This is a public message
 
 Correct: ./minecraft.sh say "This is a public message"
 
-##### ./minecraft.sh tell _user_ "_message_"
+##### ./minecraft.sh tell _user_ _message_
 If the server is online, this will send a whisper of <message> to <user>.
-If the message is not surrounded by either single or double quotes, only the first word will be sent.
-
-Incorrect: ./minecraft.sh tell test_user This is a private message
 
 Correct: ./minecraft.sh tell test_user "This is a private message"
 
