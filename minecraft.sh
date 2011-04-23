@@ -17,9 +17,9 @@ DISPLAY_ON_LAUNCH=0
 SERVER_OPTIONS=""
 
 # Modifications
-SERVERMOD=1
+SERVERMOD=0
 MODJAR="craftbukkit-0.0.1-SNAPSHOT.jar"
-RUNECRAFT=1
+RUNECRAFT=0
 
 
 # Backups
@@ -42,8 +42,7 @@ MAP_CHANGES=1
 
 MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
 MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview/
-MCOVERVIEWER_CACHE_PATH=/var/www/minecraft/maps/Overview/cache/
-MCOVERVIEWER_OPTIONS="--lighting"
+MCOVERVIEWER_OPTIONS="--rendermodes=lighting,night"
 
 # 	End of configuration
 
@@ -95,6 +94,7 @@ fi
 #	command is 'java'.
 
 # SCREEN_PID=$(screen -list | grep $SCREEN_NAME | grep -iv "No sockets found" | head -n1 | sed "s/^\s//;s/\.$SCREEN_NAME.*$//")
+USERNAME=$(whoami)
 SCREEN_PID=$(screen -ls $SCREEN_NAME | $PERL -ne 'if ($_ =~ /^\t(\d+)\.$SCREEN_NAME.*$/) { print $1; }')
 #        echo "$SCREEN_PID $JAVA_PID"
 
@@ -104,7 +104,7 @@ if [[ -z $SCREEN_PID ]]; then
 	MC_PID=''
 else
 #	MC_PID=$(ps $SCREEN_PID -F -C java -o pid,ppid,comm | tail -1 | awk '{print $2}')
-	MC_PID=$(ps -a -u $USER -o pid,ppid,comm | $PERL -ne 'if ($_ =~ /^\s*(\d+)\s+'$SCREEN_PID'\s+java/) { print $1; }')
+	MC_PID=$(ps -a -u $USERNAME -o pid,ppid,comm | $PERL -ne 'if ($_ =~ /^\s*(\d+)\s+'$SCREEN_PID'\s+java/) { print $1; }')
 fi
 
 display() {
@@ -252,7 +252,7 @@ if [[ $# -gt 0 ]]; then
 		#################################################################
 		"say")
 			if [[ 1 -eq $ONLINE ]]; then
-				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say $2\r")"
+				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say $*\r")"
 				sleep 1
 			else
 				echo "Server seems to be offline..."
@@ -261,7 +261,7 @@ if [[ $# -gt 0 ]]; then
 		#################################################################
 		"tell")
 			if [[ 1 -eq $ONLINE ]]; then
-				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "tell $2 $3\r")"
+				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "tell $2 $*\r")"
 				sleep 1
 			else
 				echo "Server seems to be offline..."
@@ -484,7 +484,7 @@ if [[ $# -gt 0 ]]; then
 						mkdir -p $MCOVERVIEWER_MAPS_PATH
 
 						echo "Minecraft-Overviewer in progress..."
-						python $MCOVERVIEWER_PATH/gmap.py $MCOVERVIEWER_OPTIONS --cachedir=$MCOVERVIEWER_CACHE_PATH $MC_PATH/$OFFLINE_NAME $MCOVERVIEWER_MAPS_PATH
+						python $MCOVERVIEWER_PATH/overviewer.py $MCOVERVIEWER_OPTIONS $MC_PATH/$OFFLINE_NAME $MCOVERVIEWER_MAPS_PATH
 						echo "Minecraft-Overviewer is done."
 
 					else
