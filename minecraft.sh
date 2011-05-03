@@ -425,6 +425,12 @@ if [[ $# -gt 0 ]]; then
 						echo "Cartography in progress..."
 						./c10t -w $MC_PATH/$OFFLINE_NAME/ -o $FILENAME.png $CARTO_OPTIONS
 						mv *.png $MAPS_PATH
+						if [ 1 -eq $MAP_CHANGES ]; then
+			                                rm -f $MAPS_PATH/previous.png
+                        			        ln $MAPS_PATH/current.png $MAPS_PATH/previous.png
+                                			rm -f $MAPS_PATH/current.png
+                                			ln $MAPS_PATH/$FILENAME.png $MAPS_PATH/current.png
+						fi
 						cd $MC_PATH
 						echo "Cartography is done."
 						if [ 1 -eq $MAP_CHANGES ]; then
@@ -435,6 +441,7 @@ if [[ $# -gt 0 ]]; then
 			                                        compare previous.png current.png $RTMP.1.tga
                         			                convert -transparent white $RTMP.1.tga $RTMP.2.tga
 			                                        composite -quality 100 $RTMP.2.tga previous.png changes/changes-$FILENAME.png
+								rm -f $MAPS_PATH/new.png
 			                                        ln changes/changes-$FILENAME.png new.png
                         			                rm -rf previous.png $RTMP.*
 							fi
