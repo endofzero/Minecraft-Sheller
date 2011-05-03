@@ -17,9 +17,9 @@ DISPLAY_ON_LAUNCH=0
 SERVER_OPTIONS=""
 
 # Modifications
-SERVERMOD=0
+SERVERMOD=1
 MODJAR="craftbukkit-0.0.1-SNAPSHOT.jar"
-RUNECRAFT=0
+RUNECRAFT=1
 
 
 # Backups
@@ -45,6 +45,7 @@ MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview/
 MCOVERVIEWER_OPTIONS="--rendermodes=lighting,night"
 
 # 	End of configuration
+[ -f config.sh ] && source config.sh
 
 # Make sure that Java, Perl, GNU Screen, and GNU Wget are installed.
 JAVA=$(which java)
