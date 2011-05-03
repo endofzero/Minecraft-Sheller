@@ -117,12 +117,12 @@ server_launch() {
 	if [[ 1 -eq $SERVERMOD ]]; then
 		echo $MODJAR
 		cd $MC_PATH
-		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar $MODJAR nogui
+		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc $SERVER_OPTIONS -jar $MODJAR nogui
 		sleep 1
 	else
 		echo "minecraft_server.jar"
 		cd $MC_PATH
-		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc -Djava.net.preferIPv4Stack=true $SERVER_OPTIONS -jar minecraft_server.jar nogui
+		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc $SERVER_OPTIONS -jar minecraft_server.jar nogui
 		sleep 1
 	fi
 }
