@@ -2,7 +2,7 @@
 # version 2.5 (4/4/11)
 # original author : Relliktsohg
 # continued contributions: Maine, endofzero
-# dopeghoti, demonspork, robbiet480, sandain, orospakr
+# dopeghoti, demonspork, robbiet480, sandain, orospakr, jdiamond
 # https://github.com/endofzero/Minecraft-Sheller
 
 # This is the path to where the location of the config.sh file resides.
@@ -48,7 +48,7 @@ MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview/
 MCOVERVIEWER_OPTIONS="--rendermodes=lighting,night"
 
 # 	End of configuration
-[ -f $SHELL_PATH/config.sh ] && source $SHELL_PATH/config.sh
+[ -f $CONFIG_PATH/config.sh ] && source $CONFIG_PATH/config.sh
 
 # Make sure that Java, Perl, GNU Screen, and GNU Wget are installed.
 JAVA=$(which java)
