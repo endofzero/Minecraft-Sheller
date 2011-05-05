@@ -5,8 +5,9 @@
 # dopeghoti, demonspork, robbiet480, sandain, orospakr
 # https://github.com/endofzero/Minecraft-Sheller
 
-# This is the path to where the minecraft.sh resides or the location of the config.sh file 
-SHELL_PATH=/home/minecraft/minecraft-Sheller
+# This is the path to where the location of the config.sh file resides.
+# If no file is found, the Configuration settings in this file will be used. 
+CONFIG_PATH=/home/minecraft/minecraft-Sheller
 
 #	Configuration
 # Main
