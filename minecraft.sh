@@ -5,8 +5,10 @@
 # dopeghoti, demonspork, robbiet480, sandain, orospakr
 # https://github.com/endofzero/Minecraft-Sheller
 
-#	Configuration
+# This is the path to where the minecraft.sh resides or the location of the config.sh file 
+SHELL_PATH=/home/minecraft/minecraft-Sheller
 
+#	Configuration
 # Main
 WORLD_NAME="world"
 OFFLINE_NAME=$WORLD_NAME-offline
@@ -45,7 +47,7 @@ MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview/
 MCOVERVIEWER_OPTIONS="--rendermodes=lighting,night"
 
 # 	End of configuration
-[ -f config.sh ] && source config.sh
+[ -f $SHELL_PATH/config.sh ] && source $SHELL_PATH/config.sh
 
 # Make sure that Java, Perl, GNU Screen, and GNU Wget are installed.
 JAVA=$(which java)
