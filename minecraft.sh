@@ -440,6 +440,7 @@ if [[ $# -gt 0 ]]; then
 							echo "Generating changes."
 							if [[ -e $MAPS_PATH/previous.png ]]; then
 			                                        cd $MAPS_PATH
+								mkdir changes
 			                                        export RTMP=/tmp/makechanges.$$.
 			                                        compare previous.png current.png $RTMP.1.tga
                         			                convert -transparent white $RTMP.1.tga $RTMP.2.tga
