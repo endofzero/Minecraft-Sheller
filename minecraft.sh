@@ -119,7 +119,8 @@ display() {
 server_launch() {
 	echo "Launching minecraft server..."
 	if [[ 1 -eq $MCMYADMIN && -f $MC_PATH/McMyAdmin.exe ]]; then
-		screen -dmS $SCREEN_NAME mono $MC_PATH/McMyAdmin.exe
+	    cd $MC_PATH
+		screen -dmS $SCREEN_NAME mono McMyAdmin.exe
 	else	    
     	if [[ 1 -eq $SERVERMOD ]]; then
     		echo $MODJAR
