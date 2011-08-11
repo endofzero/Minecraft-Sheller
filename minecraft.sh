@@ -119,6 +119,7 @@ display() {
 server_launch() {
 	echo "Launching minecraft server..."
 	if [[ 1 -eq $MCMYADMIN && -f $MC_PATH/McMyAdmin.exe ]]; then
+	    echo "Starting McMyAdmin..."
 	    cd $MC_PATH
 		screen -dmS $SCREEN_NAME mono McMyAdmin.exe
 	else	    
