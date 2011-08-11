@@ -23,6 +23,7 @@ SERVER_OPTIONS=""
 SERVERMOD=1
 MODJAR="craftbukkit-0.0.1-SNAPSHOT.jar"
 RUNECRAFT=1
+MCMYADMIN=1
 
 
 # Backups
@@ -117,22 +118,26 @@ display() {
 
 server_launch() {
 	echo "Launching minecraft server..."
-	if [[ 1 -eq $SERVERMOD ]]; then
-		echo $MODJAR
-		cd $MC_PATH
-		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc $SERVER_OPTIONS -jar $MODJAR nogui
-		sleep 1
-	else
-		echo "minecraft_server.jar"
-		cd $MC_PATH
-		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc $SERVER_OPTIONS -jar minecraft_server.jar nogui
-		sleep 1
-	fi
+	if [[ 1 -eq $MCMYADMIN && -f $MC_PATH/McMyAdmin.exe ]]; then
+		screen -dmS $SCREEN_NAME mono $MC_PATH/McMyAdmin.exe
+	else	    
+    	if [[ 1 -eq $SERVERMOD ]]; then
+    		echo $MODJAR
+    		cd $MC_PATH
+    		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc $SERVER_OPTIONS -jar $MODJAR nogui
+    		sleep 1
+    	else
+    		echo "minecraft_server.jar"
+    		cd $MC_PATH
+    		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc $SERVER_OPTIONS -jar minecraft_server.jar nogui
+    		sleep 1
+    	fi
+    fi
 }
 
 server_stop() {
 	echo "Stopping minecraft server..."
-	screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "stop.\r")"
+	screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "/quit.\r")"
 	sleep 5
 }
 
@@ -532,6 +537,12 @@ if [[ $# -gt 0 ]]; then
 			if [[ 1 -eq $SERVERMOD ]]; then
 				echo "Downloading Bukkit..."
 				wget -N http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
+    			if [[ 1 -eq $MCMYADMIN ]]; then
+		            # McMyAdmin requires this file to be named craftbukkit.jar
+        	        wget -N -O craftbukkit.jar http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
+                else
+    				wget -N http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
+    			fi
 			fi
 			if [[ 1 -eq $RUNECRAFT ]];  then
 				if [[ 1 -eq $SERVERMOD ]];  then
