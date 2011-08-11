@@ -537,7 +537,6 @@ if [[ $# -gt 0 ]]; then
 			wget -N http://www.minecraft.net/download/minecraft_server.jar
 			if [[ 1 -eq $SERVERMOD ]]; then
 				echo "Downloading Bukkit..."
-				wget -N http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
     			if [[ 1 -eq $MCMYADMIN ]]; then
 		            # McMyAdmin requires this file to be named craftbukkit.jar
         	        wget -N -O craftbukkit.jar http://ci.bukkit.org/job/dev-CraftBukkit/promotion/latest/Recommended/artifact/target/craftbukkit-0.0.1-SNAPSHOT.jar
