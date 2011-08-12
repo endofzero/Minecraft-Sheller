@@ -15,6 +15,8 @@ MC_PATH=/home/minecraft
 SERVER_PATH=""
 ONLINE_PATH=$MC_PATH/$SERVER_PATH
 OFFLINE_PATH=$MC_PATH/offline
+USE_RAMDISK=1
+RAMDISK_PATH=/dev/shm/
 SCREEN_NAME="minecraft"
 MEMMAX=1536
 DISPLAY_ON_LAUNCH=0
@@ -117,6 +119,11 @@ display() {
 
 server_launch() {
 	echo "Launching minecraft server..."
+	if [[ 1 -eq $USE_RAMDISK ]]; then
+	    echo "Creating the initial ramdisk space for Minecraft..."
+    	mkdir -p $RAMDISK_PATH/$SERVER_PATH
+    	cp -rf $OFFLINE_PATH $RAMDISK_PATH
+    fi
 	if [[ 1 -eq $MCMYADMIN && -f $MC_PATH/McMyAdmin.exe ]]; then
         echo "Starting McMyAdmin..."
 		cd $MC_PATH
@@ -144,9 +151,55 @@ server_stop() {
 	    screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "stop\r")"
 	fi
 	sleep 5
+	if [[ 1 -eq $USE_RAMDISK ]]; then
+	    echo "Syncing ramdisk contents back to hard drive"
+	    rsync -rtv $RAMDISK_PATH/$SERVER_PATH $OFFLINE_PATH &> /dev/null && \
+	    rm -rf $RAMDISK_PATH/$SERVER_PATH #&> /dev/null
+	fi
 }
 
 sync_offline() {
+    if [[ 1 -eq $USE_RAMDISK ]]; then
+        if [[ 1 -eq $ONLINE ]]; then
+            if [[ -e $MC_PATH/synclock ]]; then
+            	echo "Previous sync hasn't completed or has failed"
+            else
+                touch $MC_PATH/synclock
+            	echo "Issuing save-all command, wait 5s...";
+                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
+                sleep 5
+                echo "Issuing save-off command..."
+                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
+                sleep 1
+                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync in progress, saving is OFF.\r")"
+
+                for DIR in $ONLINE_PATH/*/;
+                do
+                    WORLDDIR=${DIR%/}
+                    WORLD=${WORLDDIR##*/}
+                    if [[ -e $WORLDDIR/level.dat ]]; then
+                        echo "Syncing $WORLD..."
+                        mkdir -p $OFFLINE_PATH/$WORLD
+                        rsync -a $WORLDDIR/* $OFFLINE_PATH/$WORLD
+                        WORLD_SIZE=$(du -s $WORLDDIR/ | sed s/[[:space:]].*//g)
+                        OFFLINE_SIZE=$(du -s $OFFLINE_PATH/$WORLD | sed s/[[:space:]].*//g)
+                        echo "WORLD $WORLD: $WORLD_SIZE KB"
+                        echo "OFFLINE $WORLD: $OFFLINE_SIZE KB"
+                    fi
+                done
+
+            	echo "Issuing save-on command..."
+                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
+                sleep 1
+                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync is complete, saving is ON.\r")"
+                rm $MC_PATH/synclock
+                echo "Sync is complete!"
+            fi
+        else
+            echo "The server isn't running, so there's nothing to sync!"
+            exit 1
+        fi
+    else
         if [[ -e $MC_PATH/synclock ]]; then
         	echo "Previous sync hasn't completed or has failed"
         else
@@ -187,6 +240,7 @@ sync_offline() {
             rm $MC_PATH/synclock
             echo "Sync is complete!"
         fi
+    fi
 }
 
 if [[ $# -gt 0 ]]; then
