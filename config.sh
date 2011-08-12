@@ -14,7 +14,7 @@ SERVER_OPTIONS="-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPaci
 SERVERMOD=1
 MODJAR="craftbukkit-0.0.1-SNAPSHOT.jar"
 RUNECRAFT=1
-MCMYADMIN=1
+MCMYADMIN=0
 
 
 # Backups
