@@ -11,9 +11,10 @@ CONFIG_PATH=/home/minecraft/minecraft-Sheller
 
 #	Configuration
 # Main
-WORLD_NAME="world"
-OFFLINE_NAME=$WORLD_NAME-offline
 MC_PATH=/home/minecraft
+SERVER_PATH=""
+ONLINE_PATH=$MC_PATH/$SERVER_PATH
+OFFLINE_PATH=$MC_PATH/offline
 SCREEN_NAME="minecraft"
 MEMMAX=1536
 DISPLAY_ON_LAUNCH=0
@@ -30,8 +31,6 @@ MCMYADMIN=1
 BKUP_PATH=$MC_PATH/backup
 BKUP_DAYS_INCR=2
 BKUP_DAYS_FULL=5
-BACKUP_FULL_LINK=${BKUP_PATH}/${WORLD_NAME}_full.tgz
-BACKUP_INCR_LINK=${BKUP_PATH}/${WORLD_NAME}_incr.tgz
 
 # Logs
 LOG_TDIR=/var/www/minecraft/logs
@@ -44,8 +43,8 @@ CARTO_OPTIONS="-q -s -m 4"
 BIOME_PATH=/home/minecraft/BiomeExtractor
 MAP_CHANGES=1
 
-MCOVERVIEWER_PATH=$MC_PATH/Overviewer/
-MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview/
+MCOVERVIEWER_PATH=$MC_PATH/Overviewer
+MCOVERVIEWER_MAPS_PATH=/var/www/minecraft/maps/Overview
 MCOVERVIEWER_OPTIONS="--rendermodes=lighting,night"
 
 # 	End of configuration
@@ -81,7 +80,7 @@ if [ ! -e $WGET ]; then
         exit 1
 fi
 
-	if [[ -e $MC_PATH/server.log.lck ]]; then
+	if [[ -e $ONLINE_PATH/server.log.lck ]]; then
 		#       ps -e | grep java | wc -l
 		ONLINE=1
 	else
@@ -151,35 +150,42 @@ sync_offline() {
         if [[ -e $MC_PATH/synclock ]]; then
         	echo "Previous sync hasn't completed or has failed"
         else
-                touch $MC_PATH/synclock
+            touch $MC_PATH/synclock
 
-                echo "Sync in progress..."
-
-                if [[ 1 -eq $ONLINE ]]; then
-                	echo "Issuing save-all command, wait 5s...";
-                        screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
-                        sleep 5
-                        echo "Issuing save-off command..."
-                        screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
-                        sleep 1
-                        screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync in progress, saving is OFF.\r")"
+            echo "Sync in progress..."
+            if [[ 1 -eq $ONLINE ]]; then
+            	echo "Issuing save-all command, wait 5s...";
+                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
+                sleep 5
+                echo "Issuing save-off command..."
+                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
+                sleep 1
+                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync in progress, saving is OFF.\r")"
+            fi
+            for DIR in $ONLINE_PATH/*/;
+            do
+                WORLDDIR=${DIR%/}
+                WORLD=${WORLDDIR##*/}
+                echo $ONLINE_PATH
+                if [[ -e $WORLDDIR/level.dat ]]; then
+                    echo "Syncing $WORLD..."
+                    mkdir -p $OFFLINE_PATH/$WORLD
+                    rsync -a $WORLDDIR/* $OFFLINE_PATH/$WORLD
+                    WORLD_SIZE=$(du -s $WORLDDIR/ | sed s/[[:space:]].*//g)
+                    OFFLINE_SIZE=$(du -s $OFFLINE_PATH/$WORLD | sed s/[[:space:]].*//g)
+                    echo "WORLD $WORLD: $WORLD_SIZE KB"
+                    echo "OFFLINE $WORLD: $OFFLINE_SIZE KB"
                 fi
+            done
 
-                        mkdir -p $MC_PATH/$OFFLINE_NAME/
-                        rsync -a $MC_PATH/$WORLD_NAME/ $MC_PATH/$OFFLINE_NAME/
-                        WORLD_SIZE=$(du -s $MC_PATH/$WORLD_NAME/ | sed s/[[:space:]].*//g)
-                        OFFLINE_SIZE=$(du -s $MC_PATH/$OFFLINE_NAME/ | sed s/[[:space:]].*//g)
-                        echo "WORLD  : $WORLD_SIZE KB"
-                        echo "OFFLINE: $OFFLINE_SIZE KB"
-
-                        if [[ 1 -eq $ONLINE ]]; then
-                        	echo "Issuing save-on command..."
-                                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
-                                sleep 1
-                                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync is complete, saving is ON.\r")"
-                fi
-                        rm $MC_PATH/synclock
-                        echo "Sync is complete"
+            if [[ 1 -eq $ONLINE ]]; then
+            	echo "Issuing save-on command..."
+                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
+                sleep 1
+                screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say World sync is complete, saving is ON.\r")"
+            fi
+            rm $MC_PATH/synclock
+            echo "Sync is complete!"
         fi
 }
 
@@ -286,7 +292,7 @@ if [[ $# -gt 0 ]]; then
 		"sync")
 			if [[ "purge" == $2 ]]; then
         	        	echo "Purging offline folder..."
-				rm -rf $MC_PATH/$OFFLINE_NAME/
+				rm -rf $MC_PATH/$OFFLINE_PATH/
 				echo "Purge Complete"
 			fi
 			sync_offline
@@ -334,88 +340,105 @@ if [[ $# -gt 0 ]]; then
 			;;
 		#################################################################
 		"backup")
-
-			if [[ -e $BKUP_PATH/$WORLD_NAME.lock ]]; then
-				echo "Backup already in progress.  Aborting."
-				exit 1
+            
+            if [[ ! -d $BKUP_PATH  ]]; then
+    			if ! mkdir -p $BKUP_PATH; then
+    				echo "Backup path $BKUP_PATH does not exist and I could not create the directory!"
+    				exit 1
+    			fi
+    		fi
+            
+            if [[ -e $BKUP_PATH/running.lock ]]; then
+    		    echo "Backup already in progress"
+    			exit 1
 			else
-				touch $BKUP_PATH/$WORLD_NAME.lock
+    			touch $BKUP_PATH/running.lock
+    		fi
+
+            
+            if [[ $ONLINE -eq 1 ]]; then
+				echo "Server running, warning players : backup in 10s."
+				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Backing up all worlds 10s\r")"
+				sleep 10
+				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Now backing up all worlds...\r")"
+				echo "Issuing save-all command, wait 5s..."
+				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
+				sleep 5
+				echo "Issuing save-off command..."
+				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
+				sleep 1
 			fi
+			
+            
+            for DIR in $OFFLINE_PATH/*/;
+            do
+                WORLDDIR=${DIR%/}
+                WORLD=${WORLDDIR##*/}
+                if [[ -e $DIR/level.dat ]]; then
+            		BACKUP_FULL_LINK=${BKUP_PATH}/${WORLD}_full.tgz
+                    BACKUP_INCR_LINK=${BKUP_PATH}/${WORLD}_incr.tgz
+        			cd $BKUP_PATH
 
-			if [[ ! -d $BKUP_PATH  ]]; then
-				if ! mkdir -p $BKUP_PATH; then
-					echo "Backup path $BKUP_PATH does not exist and I could not create the directory!"
-					rm $BKUP_PATH/$WORLD_NAME.lock
-					exit 1
-				fi
+    				DATE=$(date +%Y-%m-%d-%Hh%M)
+    				FILENAME=$WORLD/$DATE
+    				BACKUP_FILES=$BKUP_PATH/list.$DATE
+
+                    echo "Backing up $WORLD..."
+                    if [[ ! -d $BKUP_PATH/$WORLD ]]; then
+            			if ! mkdir -p $BKUP_PATH/$WORLD; then
+            				echo "Backup path $BKUP_PATH/$WORLD does not exist and I could not create the directory!"
+            				exit 1
+            			fi
+            		fi
+    				if [[ full == $2 ]]; then
+    					# If full flag set, Make full backup, and remove old incrementals
+    				    echo "Making full backup of $WORLD..."
+    					FILENAME=$FILENAME-full.tgz
+
+    					# Remove incrementals older than $BKUP_DAYS_INCR
+    					# Remove full archives older than $BKUP_DAYS_FULL
+    					touch purgelist
+    					if [[ -e $BKUP_PATH/$WORLD/*-incr.tgz ]]; then
+    					    find $WORLD/*-incr.tgz -type f -mtime +$BKUP_DAYS_INCR -print > purgelist
+    					fi
+    					if [[ -e $BKUP_PATH/$WORLD/*-full.tgz ]]; then
+    					    find $WORLD/*-full.tgz -type f -mtime +$BKUP_DAYS_FULL -print >> purgelist
+					    fi
+    					rm -f $(cat purgelist) purgelist
+
+    					# Now make our full backup
+    					pushd $OFFLINE_PATH
+    					find $WORLD -type f -print > $BACKUP_FILES
+    					tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
+    					popd
+
+    					rm -f $BACKUP_FULL_LINK $BACKUP_INCR_LINK
+    					ln -s $FILENAME $BACKUP_FULL_LINK
+    				else
+    					# Make incremental backup
+    				    echo "Making incremental backup of $WORLD..."
+    					FILENAME=$FILENAME-incr.tgz
+
+    					pushd $OFFLINE_PATH
+    					find $WORLD -newer $BACKUP_FULL_LINK -type f -print > $BACKUP_FILES
+    					tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
+    					popd
+
+    					rm -f $BACKUP_INCR_LINK
+    					ln -s $FILENAME $BACKUP_INCR_LINK
+    				fi
+
+    				rm -f $BACKUP_FILES
+                fi
+            done
+            if [[ 1 -eq $ONLINE ]]; then
+				echo "Issuing save-on command..."
+				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
+				sleep 1
+				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Backup is done, have fun !\r")"
 			fi
-
-			cd $BKUP_PATH
-
-			if [[ -e $MC_PATH/$WORLD_NAME ]]; then
-				if [[ $ONLINE -eq 1 ]]; then
-					echo "Server running, warning players : backup in 10s."
-					screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Backing up the map in 10s\r")"
-					sleep 10
-					screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Now backing up the map...\r")"
-					echo "Issuing save-all command, wait 5s..."
-					screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-all\r")"
-					sleep 5
-					echo "Issuing save-off command..."
-					screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
-					sleep 1
-				fi
-
-				cd $BKUP_PATH
-
-				DATE=$(date +%Y-%m-%d-%Hh%M)
-				FILENAME=$WORLD_NAME-$DATE
-				BACKUP_FILES=$BKUP_PATH/list.$DATE
-
-				if [[ full == $2 ]]; then
-					# If full flag set, Make full backup, and remove old incrementals
-					FILENAME=$FILENAME-full.tgz
-
-					# Remove incrementals older than $BKUP_DAYS_INCR
-					# Remove full archives older than $BKUP_DAYS_FULL
-					find ./$WORLD_NAME-*-incr.tgz -type f -mtime +$BKUP_DAYS_INCR -print > purgelist
-					find ./$WORLD_NAME-*-full.tgz -type f -mtime +$BKUP_DAYS_FULL -print >> purgelist
-					rm -f $(cat purgelist) purgelist
-
-					# Now make our full backup
-					pushd $MC_PATH
-					find $WORLD_NAME -type f -print > $BACKUP_FILES
-					tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
-					popd
-
-					rm -f $BACKUP_FULL_LINK $BACKUP_INCR_LINK
-					ln -s $FILENAME $BACKUP_FULL_LINK
-				else
-					# Make incremental backup
-					FILENAME=$FILENAME-incr.tgz
-
-					pushd $MC_PATH
-					find $WORLD_NAME -newer $BACKUP_FULL_LINK -type f -print > $BACKUP_FILES
-					tar -zcf $BKUP_PATH/$FILENAME --files-from=$BACKUP_FILES
-					popd
-
-					rm -f $BACKUP_INCR_LINK
-					ln -s $FILENAME $BACKUP_INCR_LINK
-				fi
-
-				rm -f $BACKUP_FILES
-
-				if [[ 1 -eq $ONLINE ]]; then
-					echo "Issuing save-on command..."
-					screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-on\r")"
-					sleep 1
-					screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Backup is done, have fun !\r")"
-				fi
-				echo "Backup process is over."
-			else
-				echo "The world \"$WORLD_NAME\" does not exist.";
-			fi
-			rm $BKUP_PATH/$WORLD_NAME.lock
+			echo "Backup process is over."
+			rm $BKUP_PATH/running.lock
 			;;
 		#################################################################
 		"cartography")
@@ -429,41 +452,47 @@ if [[ $# -gt 0 ]]; then
 				fi
 
 				if [[ -e $CARTO_PATH ]]; then
-					if [[ -e $MC_PATH/$WORLD_NAME ]]; then
+					echo "Cartography in progress..."
 
-						mkdir -p $MAPS_PATH
+                    for DIR in $OFFLINE_PATH/*/;
+                    do
+                        WORLDDIR=${DIR%/}
+                        WORLD=${WORLDDIR##*/}
+                        if [[ -e $DIR/level.dat ]]; then
+                            echo "Generating map for $WORLD..."
+                    		mkdir -p $MAPS_PATH/$WORLD
 
-						DATE=$(date +%Y-%m-%d-%Hh%M)
-						FILENAME=$WORLD_NAME-map-$DATE
-						cd $CARTO_PATH
-						echo "Cartography in progress..."
-						./c10t -w $MC_PATH/$OFFLINE_NAME/ -o $FILENAME.png $CARTO_OPTIONS
-						mv *.png $MAPS_PATH
-						if [ 1 -eq $MAP_CHANGES ]; then
-			                                rm -f $MAPS_PATH/previous.png
-                        			        ln $MAPS_PATH/current.png $MAPS_PATH/previous.png
-                                			rm -f $MAPS_PATH/current.png
-                                			ln $MAPS_PATH/$FILENAME.png $MAPS_PATH/current.png
-						fi
-						cd $MC_PATH
-						echo "Cartography is done."
-						if [ 1 -eq $MAP_CHANGES ]; then
-							echo "Generating changes."
-							if [[ -e $MAPS_PATH/previous.png ]]; then
-			                                        cd $MAPS_PATH
-								mkdir changes
-			                                        export RTMP=/tmp/makechanges.$$.
-			                                        compare previous.png current.png $RTMP.1.tga
-                        			                convert -transparent white $RTMP.1.tga $RTMP.2.tga
-			                                        composite -quality 100 $RTMP.2.tga previous.png changes/changes-$FILENAME.png
-								rm -f $MAPS_PATH/new.png
-			                                        ln changes/changes-$FILENAME.png new.png
-                        			                rm -rf previous.png $RTMP.*
-							fi
-						fi
-					else
-						echo "The world \"$WORLD_NAME\" does not exist."
-					fi
+        					DATE=$(date +%Y-%m-%d-%Hh%M)
+        					FILENAME=$WORLD-map-$DATE
+        					cd $CARTO_PATH
+
+        					./c10t -w $OFFLINE_PATH/$WORLD -o $FILENAME.png $CARTO_OPTIONS
+        					mv *.png $MAPS_PATH/$WORLD
+        					if [ 1 -eq $MAP_CHANGES ]; then
+                                rm -f $MAPS_PATH/$WORLD/previous.png
+                                ln $MAPS_PATH/$WORLD/current.png $MAPS_PATH/$WORLD/previous.png
+                                rm -f $MAPS_PATH/$WORLD/current.png
+                                ln $MAPS_PATH/$WORLD/$FILENAME.png $MAPS_PATH/$WORLD/current.png
+        					fi
+        					cd $MC_PATH
+
+        					if [ 1 -eq $MAP_CHANGES ]; then
+        						echo "Generating changes for $WORLD..."
+        						if [[ -e $MAPS_PATH/$WORLD/previous.png ]]; then
+                                    cd $MAPS_PATH
+                                    mkdir changes
+                                    export RTMP=/tmp/makechanges.$$.
+                                    compare previous.png current.png $RTMP.1.tga
+                                    convert -transparent white $RTMP.1.tga $RTMP.2.tga
+                                    composite -quality 100 $RTMP.2.tga previous.png changes/changes-$FILENAME.png
+                                    rm -f $MAPS_PATH/$WORLD/new.png
+                                    ln changes/changes-$FILENAME.png new.png
+                                    rm -rf previous.png $RTMP.*
+        						fi
+        					fi
+                    	fi
+                    done
+				    echo "Cartography is done."
 				else
 					echo "The path to cartographer seems to be wrong."
 				fi
@@ -473,19 +502,20 @@ if [[ $# -gt 0 ]]; then
 		#################################################################
 		"biome")
 			if [[ -e $BIOME_PATH ]]; then
-				if [[ -e $MC_PATH/$WORLD_NAME ]]; then
-
-					if [[ "sync" == $2 ]]; then
-						sync_offline
-					fi
-
-					echo "Biome extraction in progress..."
-					java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui $MC_PATH/$OFFLINE_NAME/
-					echo "Biome extraction is complete"
-
-				else
-					echo "The world \"$WORLD_NAME\" does not exist."
+				if [[ "sync" == $2 ]]; then
+					sync_offline
 				fi
+				echo "Biome extraction in progress..."
+                for DIR in $OFFLINE_PATH/*/;
+                do
+                    WORLDDIR=${DIR%/}
+                    WORLD=${WORLDDIR##*/}
+                    if [[ -e $DIR/level.dat ]]; then
+                        echo "Extracting biomes for $WORLD..."
+				        java -jar $BIOME_PATH/MinecraftBiomeExtractor.jar -nogui $OFFLINE_PATH/$WORLD
+				    fi
+				done
+				echo "Biome extraction is complete"
 			else
 				echo "The path to MinecraftBiomeExtractor.jar seems to be wrong."
 			fi
@@ -502,17 +532,21 @@ if [[ $# -gt 0 ]]; then
 				fi
 
 				if [[ -e $MCOVERVIEWER_PATH ]];  then
-					if [[ -e $MC_PATH/$WORLD_NAME ]]; then
+					echo "Minecraft-Overviewer in progress..."
 
-						mkdir -p $MCOVERVIEWER_MAPS_PATH
-
-						echo "Minecraft-Overviewer in progress..."
-						python $MCOVERVIEWER_PATH/overviewer.py $MCOVERVIEWER_OPTIONS $MC_PATH/$OFFLINE_NAME $MCOVERVIEWER_MAPS_PATH
-						echo "Minecraft-Overviewer is done."
-
-					else
-						echo "The world \"$WORLD_NAME\" does not exist.";
-					fi
+                    for DIR in $OFFLINE_PATH/*/;
+                    do
+                        WORLDDIR=${DIR%/}
+                        WORLD=${WORLDDIR##*/}
+                        if [[ -e $DIR/level.dat ]]; then
+                            echo "Generating map for $WORLD..."
+    						mkdir -p $MCOVERVIEWER_MAPS_PATH
+    						
+    						python $MCOVERVIEWER_PATH/overviewer.py $MCOVERVIEWER_OPTIONS $OFFLINE_PATH/$WORLD $MCOVERVIEWER_MAPS_PATH/$WORLD
+                        fi
+					done
+					
+					echo "Minecraft-Overviewer is done."
 				else
 					echo "The path to Minecraft-Overviewer seems to be wrong."
 				fi
@@ -540,7 +574,7 @@ if [[ $# -gt 0 ]]; then
 
 			echo "Downloading new binaries..."
 			wget -N http://www.minecraft.net/download/minecraft_server.jar
-			if [[ 1 -eq $SERVERMOD ]]; then
+		    if [[ 1 -eq $SERVERMOD ]]; then
 				echo "Downloading Bukkit..."
     			if [[ 1 -eq $MCMYADMIN ]]; then
 		            # McMyAdmin requires this file to be named craftbukkit.jar
@@ -565,6 +599,7 @@ if [[ $# -gt 0 ]]; then
 					rm -rf ModTmp 
 				fi
 			fi
+			
 
 			server_launch
 			if [[ 1 -eq $DISPLAY_ON_LAUNCH ]]; then
