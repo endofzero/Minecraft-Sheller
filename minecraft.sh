@@ -153,7 +153,7 @@ server_stop() {
 	sleep 5
 	if [[ 1 -eq $USE_RAMDISK ]]; then
 	    echo "Syncing ramdisk contents back to hard drive"
-	    rsync -rtv $RAMDISK_PATH/$SERVER_PATH $OFFLINE_PATH &> /dev/null && \
+	    rsync -rtv $RAMDISK_PATH/$SERVER_PATH/* $OFFLINE_PATH &> /dev/null && \
 	    rm -rf $RAMDISK_PATH/$SERVER_PATH #&> /dev/null
 	fi
 }
