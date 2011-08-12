@@ -119,10 +119,10 @@ display() {
 server_launch() {
 	echo "Launching minecraft server..."
 	if [[ 1 -eq $MCMYADMIN && -f $MC_PATH/McMyAdmin.exe ]]; then
-	    echo "Starting McMyAdmin..."
-	    cd $MC_PATH
+        echo "Starting McMyAdmin..."
+		cd $MC_PATH
 		screen -dmS $SCREEN_NAME mono McMyAdmin.exe
-	else	    
+	else
     	if [[ 1 -eq $SERVERMOD ]]; then
     		echo $MODJAR
     		cd $MC_PATH
@@ -139,7 +139,11 @@ server_launch() {
 
 server_stop() {
 	echo "Stopping minecraft server..."
-	screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "/quit.\r")"
+	if [[ 1 -eq $MCMYADMIN && -f $MC_PATH/McMyAdmin.exe ]]; then
+	    screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "/quit\r")"
+	else
+	    screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "stop\r")"
+	fi
 	sleep 5
 }
 
