@@ -3,6 +3,7 @@
 # original author : Relliktsohg
 # continued contributions: Maine, endofzero
 # dopeghoti, demonspork, robbiet480, sandain, orospakr, jdiamond, FabianN
+# HighCommander540
 # https://github.com/endofzero/Minecraft-Sheller
 
 # This is the path to where the location of the config.sh file resides.
@@ -330,7 +331,7 @@ if [[ $# -gt 0 ]]; then
 		#################################################################
 		"say")
 			if [[ 1 -eq $ONLINE ]]; then
-				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say $*\r")"
+				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "$*\r")"
 				sleep 1
 			else
 				echo "Server seems to be offline..."
@@ -339,7 +340,7 @@ if [[ $# -gt 0 ]]; then
 		#################################################################
 		"tell")
 			if [[ 1 -eq $ONLINE ]]; then
-				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "tell $2 $*\r")"
+				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "$*\r")"
 				sleep 1
 			else
 				echo "Server seems to be offline..."
