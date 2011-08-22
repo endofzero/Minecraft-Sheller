@@ -2,7 +2,7 @@
 # version 2.5 (4/4/11)
 # original author : Relliktsohg
 # continued contributions: Maine, endofzero
-# dopeghoti, demonspork, robbiet480, sandain, orospakr, jdiamond
+# dopeghoti, demonspork, robbiet480, sandain, orospakr, jdiamond, FabianN
 # https://github.com/endofzero/Minecraft-Sheller
 
 # This is the path to where the location of the config.sh file resides.
@@ -31,6 +31,9 @@ BKUP_DAYS_INCR=2
 BKUP_DAYS_FULL=5
 BACKUP_FULL_LINK=${BKUP_PATH}/${WORLD_NAME}_full.tgz
 BACKUP_INCR_LINK=${BKUP_PATH}/${WORLD_NAME}_incr.tgz
+
+ALT_BACKUP=1
+ALT_PATH=$MC_PATH/plugins
 
 # Logs
 LOG_TDIR=/var/www/minecraft/logs
