@@ -1,9 +1,12 @@
 #       Configuration
 echo "Alternate Config file in use"
 # Main
-WORLD_NAME="world"
-OFFLINE_NAME=$WORLD_NAME-offline
 MC_PATH=/home/minecraft
+SERVER_PATH=""
+ONLINE_PATH=$MC_PATH/$SERVER_PATH
+OFFLINE_PATH=$MC_PATH/offline
+USE_RAMDISK=0
+RAMDISK_PATH=/dev/shm/
 SCREEN_NAME="minecraft"
 MEMMAX=1536
 DISPLAY_ON_LAUNCH=0
@@ -13,14 +16,13 @@ SERVER_OPTIONS="-XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSIncrementalPaci
 SERVERMOD=1
 MODJAR="craftbukkit-0.0.1-SNAPSHOT.jar"
 RUNECRAFT=1
+MCMYADMIN=0
 
 
 # Backups
 BKUP_PATH=$MC_PATH/backup
 BKUP_DAYS_INCR=2
 BKUP_DAYS_FULL=5
-BACKUP_FULL_LINK=${BKUP_PATH}/${WORLD_NAME}_full.tgz
-BACKUP_INCR_LINK=${BKUP_PATH}/${WORLD_NAME}_incr.tgz
 
 # Logs
 LOG_TDIR=/var/www/minecraft/logs
