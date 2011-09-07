@@ -45,7 +45,8 @@ LOGS_DAYS=14
 # Mapping
 CARTO_PATH=$MC_PATH/carto
 MAPS_PATH=/var/www/minecraft/maps
-CARTO_OPTIONS="-q -s -m 4"
+CARTO_OPTIONS="-q -m 20"
+CARTO_OPTIONS_NETHER="-N --hell-mode"
 BIOME_PATH=/home/minecraft/BiomeExtractor
 MAP_CHANGES=1
 
@@ -138,11 +139,17 @@ server_launch() {
     		cd $MC_PATH
     		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc $SERVER_OPTIONS -jar $MODJAR nogui
     		sleep 1
+		SCREEN_PID2=$(screen -ls $SCREEN_NAME | $PERL -ne 'if ($_ =~ /^\t(\d+)\.$SCREEN_NAME.*$/) { print $1; }')
+		MC_PID2=$(ps -a -u $USERNAME -o pid,ppid,comm | $PERL -ne 'if ($_ =~ /^\s*(\d+)\s+'$SCREEN_PID2'\s+java/) { print $1; }')
+		echo $MC_PID2 > "$MC_PATH/minecraft.pid"
     	else
     		echo "minecraft_server.jar"
     		cd $MC_PATH
     		screen -dmS $SCREEN_NAME java -server -Xmx${MEMMAX}M -Xincgc $SERVER_OPTIONS -jar minecraft_server.jar nogui
     		sleep 1
+		SCREEN_PID2=$(screen -ls $SCREEN_NAME | $PERL -ne 'if ($_ =~ /^\t(\d+)\.$SCREEN_NAME.*$/) { print $1; }')
+		MC_PID2=$(ps -a -u $USERNAME -o pid,ppid,comm | $PERL -ne 'if ($_ =~ /^\s*(\d+)\s+'$SCREEN_PID2'\s+java/) { print $1; }')
+		echo $MC_PID2 > "$MC_PATH/minecraft.pid"
     	fi
     fi
 }
@@ -155,6 +162,7 @@ server_stop() {
 	    screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "stop\r")"
 	fi
 	sleep 5
+        /bin/rm -f  "$MC_PATH/minecraft.pid"
 	if [[ 1 -eq $USE_RAMDISK ]]; then
 	    echo "Syncing ramdisk contents back to hard drive"
 	    rsync -rtv $RAMDISK_PATH/$SERVER_PATH/* $OFFLINE_PATH &> /dev/null && \
@@ -523,8 +531,19 @@ if [[ $# -gt 0 ]]; then
         					DATE=$(date +%Y-%m-%d-%Hh%M)
         					FILENAME=$WORLD-map-$DATE
         					cd $CARTO_PATH
-
-        					./c10t -w $OFFLINE_PATH/$WORLD -o $FILENAME.png $CARTO_OPTIONS
+						WORLD_PATH_RAW="$OFFLINE_PATH"/"$WORLD"
+						CARTO_OPTIONS_RAW=$CARTO_OPTIONS
+						case $WORLD_PATH_RAW in
+						    *"_nether" ) 
+							WORLD_PATH_COOKED="$WORLD_PATH_RAW""/DIM-1"
+							CARTO_OPTIONS_COOKED="$CARTO_OPTIONS_RAW"" ""$CARTO_OPTIONS_NETHER"
+							;;
+						    * ) 
+							WORLD_PATH_COOKED="$WORLD_PATH_RAW"
+							CARTO_OPTIONS_COOKED="$CARTO_OPTIONS_RAW"
+							;;
+						esac
+        					./c10t -w $WORLD_PATH_COOKED -o "$FILENAME".png $CARTO_OPTIONS_COOKED
         					mv *.png $MAPS_PATH/$WORLD
         					if [ 1 -eq $MAP_CHANGES ]; then
                                 rm -f $MAPS_PATH/$WORLD/previous.png
