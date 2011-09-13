@@ -556,7 +556,7 @@ if [[ $# -gt 0 ]]; then
         					if [ 1 -eq $MAP_CHANGES ]; then
         						echo "Generating changes for $WORLD..."
         						if [[ -e $MAPS_PATH/$WORLD/previous.png ]]; then
-                                    cd $MAPS_PATH
+                                    cd $MAPS_PATH/$WORLD
                                     mkdir changes
                                     export RTMP=/tmp/makechanges.$$.
                                     compare previous.png current.png $RTMP.1.tga
