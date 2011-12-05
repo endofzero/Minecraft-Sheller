@@ -7,7 +7,7 @@
 # https://github.com/endofzero/Minecraft-Sheller
 
 # This is the path to where the location of the config.sh file resides.
-# If no file is found, the Configuration settings in this file will be used. 
+# If no file is found, the Configuration settings in this file will be used.
 CONFIG_PATH=/home/minecraft/minecraft-Sheller
 
 #	Configuration
@@ -98,7 +98,7 @@ fi
 #	than just killing the lowest PID java process like the
 #	original verison did, but still non-optimal.
 #
-#	Explanation: 
+#	Explanation:
 #
 #	Find the PID of our screen that's running Minecraft.
 #	Then, use PS to find children of that screen whose
@@ -406,14 +406,13 @@ if [[ $# -gt 0 ]]; then
 			;;
 		#################################################################
 		"backup")
-            
+
             if [[ ! -d $BKUP_PATH  ]]; then
     			if ! mkdir -p $BKUP_PATH; then
     				echo "Backup path $BKUP_PATH does not exist and I could not create the directory!"
     				exit 1
     			fi
     		fi
-            
             if [[ -e $BKUP_PATH/running.lock ]]; then
     		    echo "Backup already in progress"
     			exit 1
@@ -421,7 +420,7 @@ if [[ $# -gt 0 ]]; then
     			touch $BKUP_PATH/running.lock
     		fi
 
-            
+
             if [[ $ONLINE -eq 1 ]]; then
 				echo "Server running, warning players : backup in 10s."
 				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "say Backing up all worlds 10s\r")"
@@ -434,8 +433,8 @@ if [[ $# -gt 0 ]]; then
 				screen -S $SCREEN_NAME -p 0 -X stuff "$(printf "save-off\r")"
 				sleep 1
 			fi
-			
-            
+
+
             for DIR in $OFFLINE_PATH/*/;
             do
                 WORLDDIR=${DIR%/}
@@ -534,11 +533,11 @@ if [[ $# -gt 0 ]]; then
 						WORLD_PATH_RAW="$OFFLINE_PATH"/"$WORLD"
 						CARTO_OPTIONS_RAW=$CARTO_OPTIONS
 						case $WORLD_PATH_RAW in
-						    *"_nether" ) 
+						    *"_nether" )
 							WORLD_PATH_COOKED="$WORLD_PATH_RAW""/DIM-1"
 							CARTO_OPTIONS_COOKED="$CARTO_OPTIONS_RAW"" ""$CARTO_OPTIONS_NETHER"
 							;;
-						    * ) 
+						    * )
 							WORLD_PATH_COOKED="$WORLD_PATH_RAW"
 							CARTO_OPTIONS_COOKED="$CARTO_OPTIONS_RAW"
 							;;
@@ -618,11 +617,11 @@ if [[ $# -gt 0 ]]; then
                         if [[ -e $DIR/level.dat ]]; then
                             echo "Generating map for $WORLD..."
     						mkdir -p $MCOVERVIEWER_MAPS_PATH
-    						
+
     						python $MCOVERVIEWER_PATH/overviewer.py $MCOVERVIEWER_OPTIONS $OFFLINE_PATH/$WORLD $MCOVERVIEWER_MAPS_PATH/$WORLD
                         fi
 					done
-					
+
 					echo "Minecraft-Overviewer is done."
 				else
 					echo "The path to Minecraft-Overviewer seems to be wrong."
@@ -673,10 +672,10 @@ if [[ $# -gt 0 ]]; then
 					unzip runecraft_latest.zip
 					jar uvf $MC_PATH/minecraft_server.jar *.class
 					cd $MC_PATH
-					rm -rf ModTmp 
+					rm -rf ModTmp
 				fi
 			fi
-			
+
 
 			server_launch
 			if [[ 1 -eq $DISPLAY_ON_LAUNCH ]]; then
