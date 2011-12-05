@@ -89,6 +89,19 @@ defaults to save the files inside of the world folder. This can grow backups
 that are only 3mb to 99mb files. If you are not cleaning the logs, this will
 start to consume a considerable amount of hard drive space.
 
+#### Multiple Worlds
+
+This script is also setup to work with multiple worlds. Worlds are found by looking for the level.dat file.
+If that file is found, the script will consider that an additional world. Keep this in mind when you backup
+your world folders as you may end up having operations performed on that folder when you didn't want it to
+if you were to just create a copy of the folder in the same root directory 'cp world/ world_backup'. Actions
+like sync and cartography will be affected.
+
+Sync will create a copy of the entire world folder(s) into the location you have specified for the offline folder.
+
+Cartography will also run on each found world and will save the images in a folder with the world name in the location
+specified for the image output.
+
 Configuration :
 ===============
 
